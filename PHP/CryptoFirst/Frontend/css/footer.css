@@ -1,0 +1,102 @@
+.footer {
+	width:100%;
+	position:relative;
+	padding:0px;
+	z-index: 99;
+}
+
+.upFooter {
+	width:100%; 
+	background:#363839; 
+	border-top:1px solid #afafaf;
+	color:#afafaf;
+}
+
+.trollBox {
+	margin:auto; 
+	width:76%; 
+	background:#5192cc; 
+	color:white; 
+	font-weight:bold;
+	font-size:16px;
+	cursor:pointer;
+	padding-top:10px; 
+}
+
+.downFooter {
+	color:white;
+	background:#282a2b;
+	border-top:1px solid #4b4c4d;
+	font-size:14px;
+	height:28px;
+}
+
+.downloadButtons {
+	width:100px;
+	height:30px;
+	cursor:pointer;
+}
+
+.footerAddSocialButton {
+	width:30px;
+	height:30px;
+	cursor:pointer;
+}
+
+.footerCenterUpButton {
+	width:40px;
+	height:40px;
+	cursor:pointer;
+}
+
+.footerCenterUpButton:hover {
+	opacity: 0.8;
+}
+
+.emailLined {
+	color:#afafaf;
+	text-decoration: unset;
+	cursor:pointer;
+}
+
+.emailLined:hover {
+	color:#5192cc;
+}
+
+.emailLined2 {
+	color:#afafaf;
+	text-decoration: unset;
+	font-weight:bold;
+}
+
+.emailLink {
+	cursor:pointer;
+}
+
+.emailLink:hover {
+	color:#5192cc;
+	text-decoration: underline;
+}
+
+.footerContactTitle {
+	font-size:26px;
+	padding-bottom:15px;
+	color:#afafaf;
+}
+
+.footerContactContent {
+	font-size:16px;
+	color:#afafaf;
+	padding-top:5px;
+	padding-bottom:5px;
+}
+
+.footerButton01 {
+	background:#4367b2;
+	border-radius:3px;
+	cursor:pointer;
+}
+
+.footerButton01:hover {
+	background: #3357a2;
+}

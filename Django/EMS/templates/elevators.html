@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Elevator{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/app.css' %}">
+{% endblock %}
+
+{% block main %}
+    {% include 'elements/format.html' %}
+    {% include 'elements/update_app.html' %}
+
+    <div class="elevator-app row">
+        <div class="app-header">
+            <h1><b>Welcome</b> <small>to our Elevator System</small><h1>
+            <button class="btn btn-primary app-format right" title="This button is to initialize this elevator app" id="appFormatBtn">Format</button>
+        </div>
+        <div class="app-body">
+            <div class="elevators" id="elevators">
+                {# elevators go here #}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer %}
+    <script src="{% static 'js/app.js' %}"></script>
+{% endblock %}

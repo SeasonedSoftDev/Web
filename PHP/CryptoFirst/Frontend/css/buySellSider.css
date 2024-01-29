@@ -1,0 +1,14 @@
+.buySellSiderContainer {
+	width:100%;
+	height:300px;
+	background:#1a5267;
+	position:fixed;
+}
+
+.buySellChainBack {
+	width:100%;
+	height:300px;
+	background:url("../images/smallChain.png");
+	background-repeat : repeat-x;
+	opacity:0.2;
+}

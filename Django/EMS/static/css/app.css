@@ -1,0 +1,222 @@
+.elevator-app {
+    margin: 0 10px;
+    background-color: rgb(225, 227, 235);
+    height: 510px;
+    overflow: auto;
+}
+
+#formatApp {
+    position: absolute;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 0 4px 3px rgb(218, 215, 215);
+    width:34%;
+    height: auto;
+    left: 33%;
+    top: 30%;
+    padding: 0 10px;
+    display: none;
+}
+
+#updateApp {
+    position: absolute;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 0 4px 3px rgb(218, 215, 215);
+    width:34%;
+    height: auto;
+    left: 33%;
+    top: 25%;
+    padding: 0 10px;
+    display: none;
+}
+
+#formatApp > .header {
+    text-align: center;
+    border-bottom: 2px solid lightgray;
+}
+
+#formatApp > .body {
+    text-align: center;
+    border-bottom: 2px solid lightgray;
+    padding: 10px 0;
+}
+
+#formatApp > .footer {
+    display: flex;
+    justify-content: space-around;
+    text-align: center;
+    padding: 10px 0;
+}
+
+#updateApp > .header {
+    text-align: center;
+    border-bottom: 2px solid lightgray;
+}
+
+#updateApp > .body {
+    text-align: center;
+    border-bottom: 2px solid lightgray;
+    padding: 10px 0;
+}
+
+#updateApp > .body > .item {
+    display: flex;
+    justify-content: space-around;
+    font-size: 1.4em;
+    border-bottom: 2px solid rgb(236, 230, 230)
+}
+
+#updateApp > .body > .item:last-child {
+    border: none !important;
+}
+
+#updateApp > .footer {
+    display: flex;
+    justify-content: space-around;
+    text-align: center;
+    padding: 10px 0;
+}
+
+.item-right {
+    width: 15%;
+}
+
+#editToFloor {
+    width: 100%;
+}
+
+.elevator-app > .app-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 15px;
+    border-bottom: 5px outset rgb(255, 255, 255);
+}
+
+.elevator-app > .app-body {
+    width: 98%;
+    min-height: 425px;
+    margin: 5px 1%;
+    background-color: rgb(240, 240, 247);
+}
+
+.elevator-app > .app-body > .elevators {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 20px 10px;
+    flex-wrap: wrap;
+}
+
+.elevators > .elevator {
+    width: 23%;
+    padding: 0.2% 1%;
+    border: 1px solid rgb(76, 14, 95);
+    border-radius: 10px;
+    height: auto;
+    background-color: white;
+}
+
+.elevators > .elevator > .elevator-header {
+    cursor: pointer;
+    border-bottom: 1px solid blue;
+    text-align: center;
+    font-size: 1.7em;
+    color: rgb(126, 54, 140)
+}
+
+.elevators > .elevator > .elevator-body {
+    width: 100%;
+    padding: 3% 5%;
+
+}
+
+.elevators > .elevator > .elevator-footer {
+    border-top: 1px solid blue;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 2% 0; 
+}
+
+.elevator-body > .elevator-item {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid black;
+    margin: 2px 0
+}
+
+.elevator-body > .elevator-item:last-child {
+    border: none
+}
+
+.elevator-body > .elevator-item > .elevator-text {
+    font-size: 1.3em;
+}
+
+.elevator-body > .elevator-item > .item {
+    font-size: 1.2em;
+}
+
+.elevator-body > .elevator-item > .item-circle {
+    cursor: pointer;
+    text-align: center;
+    color: white;
+    min-width: 27px;
+    height: 26px;
+    border-radius: 100%;
+}
+
+.item-red {
+    background-color: rgb(232, 21, 21);
+}
+
+.item-red:hover {
+    background-color: red
+}
+
+.item-blue {
+    background-color: rgb(62, 68, 181);
+}
+
+.item-blue:hover {
+    background-color: rgb(59, 59, 234);
+}
+
+.item-default {
+    background-color: rgb(171, 161, 161);
+}
+
+.item-default:hover {
+    background-color: gray;
+}
+
+.item-orange {
+    background-color: rgb(252, 201, 36);
+}
+
+.item-orange:hover {
+    background-color: rgb(255, 221, 0);
+}
+
+.item-success:hover {
+    background-color: rgb(43, 135, 206);
+}
+
+.item-success {
+    background-color: rgb(43, 185, 217);
+}
+
+.item-success:hover {
+    background-color: rgb(45, 204, 239);
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+    background-color: rgb(134, 146, 142);
+}
+
+::-webkit-scrollbar:hover {
+    background-color: rgb(98, 107, 104);
+}

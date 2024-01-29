@@ -1,0 +1,46 @@
+.select-search {
+  position: relative;
+}
+
+.select-search .header input {
+  width: 100%;
+  text-align: center;
+}
+
+.select-search .list {
+  max-height: 6em;
+  overflow: auto;
+  position: absolute;
+  top: 1.2em;
+  width: 100%;
+}
+
+.select-search .header i {
+  cursor: pointer;
+}
+
+.select-search .header img {
+  height: 1.1em;
+  width: 1.1em;
+}
+
+.select-search .header i:hover {
+  opacity: 0.9;
+}
+
+.select-search .header input {
+  padding: 0px;
+  border: none;
+  outline: none;
+  font-size: 1em;
+  background: none;
+}
+
+.select-search .list img {
+  border-radius: 50%;
+  height: 1.5em;
+}
+
+.select-search .list .item {
+  cursor: pointer;
+}

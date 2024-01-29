@@ -1,0 +1,38 @@
+table.itct {
+  border-radius: 0.45em;
+  width: 100%;
+}
+
+table.itct td {
+  margin: 0.1em;
+}
+
+table.itct thead td {
+  font-size: 0.75em;
+  font-weight: bold;
+  text-align: center;
+}
+
+table.itct thead td input {
+  width: 100%;
+  font-size: 0.8em;
+  text-align: center;
+}
+
+table.itct i {
+  cursor: pointer;
+}
+
+table.itct i:hover {
+  opacity: 0.75;
+}
+
+table.itct .status,
+table.itct .pagenation {
+  font-size: 0.9em;
+  background: none;
+}
+
+table.itct .PageInput {
+  padding: 0px 0.1em 0px 0.1em;
+}

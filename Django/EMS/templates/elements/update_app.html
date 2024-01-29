@@ -1,0 +1,40 @@
+<div id="updateApp" aria-modal="true">
+    <div class="header">
+        <h3 id='elevatorId'></h3>
+    </div>
+    <div class="body">
+        <input type="text" name="" id="editId" hidden>
+        <div class='item'>
+            <div class='text'>Current floor: </div>
+            <div id="currentFloor"></div>
+        </div>
+        <div class='item'>
+            <div class="text">To go: </div>
+            <div class="item-right">
+                <input type="number" name="" id="editToFloor">
+            </div>
+        </div>
+        <div class='item' id="maintenanceStatus">
+            <div class="text">Maintenance: </div>
+            <div class="item-right">
+                <select name="" id="editMaintenance">
+                    <option value="true">true</option>
+                    <option defaultvalue="false">false</option>
+                </select>
+            </div>
+        </div>
+        <div class='item' id="operationalStatus">
+            <div class="text">Operational: </div>
+            <div class="item-right">
+                <select name="" id="editOperational">
+                    <option value="true">true</option>
+                    <option defaultvalue="false">false</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        <button class="btn btn-default" id="editCloseBtn">Close</button>
+        <button class="btn btn-primary" id="editSaveInfoBtn">Save</button>
+    </div>
+</div>

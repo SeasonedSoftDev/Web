@@ -1,0 +1,10 @@
+.search-bar {
+  width: 100%;
+}
+
+.search-bar input {
+  font-size: 1em;
+  width: calc(100% - 1.5em);
+}
+
+

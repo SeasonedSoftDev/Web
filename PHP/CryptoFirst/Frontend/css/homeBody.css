@@ -1,0 +1,887 @@
+.sliderBack {
+  /*position:fixed;*/
+  z-index: 91;
+  position:relative;
+  background: #0077a8;
+  height:660px;
+  width:100%;
+}
+
+.sliderChain {
+  /*position:fixed;
+  z-index: 92;*/
+  background-repeat : repeat-x;
+  width:100%;
+  height:660px;
+  background:url("../images/chain.png");
+}
+
+.sliderSentences01 {
+  /*z-index: 93;
+  position:fixed;*/
+  margin-left:70px;
+  color:#fff;
+  height:100%;
+}
+
+.downIcon {
+  width:50px;
+  height: 50px;
+  border-radius: 30px;
+  border:3px solid white;
+  cursor:pointer;
+  margin-bottom:25px;
+}
+
+.downIcon:hover {
+  background: #ccc036;
+}
+
+.quickWindow {
+  width:470px;
+  min-height:150px;
+  background:#cadee8;
+  border-radius: 10px;
+  font-size:20px;
+  color:#464646;
+}
+
+.subWndLeftElement {
+  padding-left:20px;
+  padding-right:10px;
+  text-align:left;
+  width:50%;
+  height:40px;
+}
+
+.subWndRightElement {
+  padding-right:20px;
+  padding-left:10px;
+  text-align:right;
+  width:50%;
+}
+
+.subWndButton {
+  width:120px;
+  height:18px;
+  padding-left:20px;
+  padding-right:20px;
+  padding-top:8px;
+  padding-bottom:8px;
+  border-radius: 5px;
+  font-size:16px;
+  color:white;
+  cursor:pointer;
+}
+
+.subWndButton01 {
+  background:#0077a8;
+}
+
+.subWndButton01:hover {
+  background:#5192cc;
+}
+
+.subWndButton02 {
+  background:#b9cce2;
+}
+
+.subWndLargeInput {
+  width:426px;
+}
+
+.subWndSmallInput {
+  width:200px;
+}
+
+.subWndNoteText {
+  font-size:12.5px;
+}
+
+.subWndActiveText {
+  font-size:12.5px;
+  color:#0077a8;
+  cursor:pointer;
+}
+
+.subWndActiveText:hover {
+  color:#6c7bea;
+}
+
+.subWndBlankUp {
+  height:30px;
+}
+
+.subWndBlankDown {
+  height:10px; 
+}
+
+.smartBackground {
+  width:100%;
+  height:100%;
+  z-index: 90;
+  position:fixed;
+}
+
+.UpButtonGroup {
+  position:fixed;
+  width:80px;
+  background: #454545;
+  z-index:100;
+  text-align: left;
+  font-size: 32px;
+  color: white;
+  cursor:pointer;
+  opacity:0.7;
+  padding-left:14px;
+  padding-top:12px;
+  padding-bottom:12px;
+  visibility: hidden;
+}
+
+.UpButtonGroup:hover {
+  background:#5192cc;
+}
+
+.flipFirstImg {
+  margin-top:20px;
+}
+
+.flipFirstText {
+  margin-top:20px;
+}
+
+.flipGroup {
+  width:100%;
+  padding-left:0px;
+  margin-left:0px;
+	position:relative;
+	background:white;
+  padding-top:105px;
+}
+
+.flipElement {
+	width:300px; 
+	height:300px;
+  margin-bottom:90px;
+	float:left;
+}
+
+.flipRegion {
+	background:white;
+	perspective: 600px;
+	cursor:pointer;
+	width: 300px;
+	height: 300px;
+}
+
+.flipRegion:hover .flipContainer, .flipRegion.hover .flipContainer {
+  transform: rotateY(180deg);
+  width:300px;
+  height:300px;
+}
+
+.flipPrev {
+  width: 300px;
+  height: 300px;
+  z-index: 1;
+  background:#f6f6f6;
+  text-align:center;
+  font-size: 40px;
+}
+
+.flipAfter {
+  width: 300px;
+  height: 300px;
+  z-index: 0;
+  background:#fbf88a;
+  padding-left: 30px;
+  padding-right: 30px;
+  padding-top:20px;
+  font-size:18.5px;
+  text-align:center;
+}
+
+.flipContainer {
+  transition: 0.3s;
+  transform-style: preserve-3d;
+  position: relative;
+}
+
+.flipPrev, .flipAfter {
+  backface-visibility: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  color:#252525;
+}
+
+.flipPrev {
+  z-index: 0;
+  transform: rotateY(0deg);
+}
+
+.flipAfter {
+  transform: rotateY(180deg);
+}
+
+.triangle-bottomright {
+  width: 0;
+  height: 0;
+  border-bottom: 100px solid #03a9f4;
+}
+
+.triangle-topleft {
+  width: 0;
+  height: 0;
+  border-top: 100px solid #03a9f4;
+}
+
+.triangleContainer {
+	width:100%; 
+	background:white; 
+	z-index:95;
+	position:relative;
+  padding-top:50px;
+}
+
+.triangleBody {
+	width:100%;
+	height:300px;
+	background:#03a9f4;
+	cursor:pointer;
+}
+
+.triAngleGroup {
+	width:100%; 
+	height:450px;
+	background:#03a9f4;
+}
+
+.triAngleText {
+	width:150px; 
+	margin:auto; 
+	text-align:center; 
+	font-size:48px; 
+	padding-top:15px;
+	color:white;
+}
+
+.triAngleElement {
+	width:30%;
+}
+
+.triangleBody {
+	width:150px; 
+	height:150px; 
+	background:white; 
+	border-radius: 75px;
+	margin:auto; 
+}
+
+.triAngleTopText {
+	width:100%;
+	font-size:48px;
+	color:white;
+	text-align:center;
+	padding-top:80px;
+  padding-bottom:20px;
+	font-weight:bold;
+}
+
+.triangleGhost {
+	width:130px;
+	height:130px;
+	border-radius: 75px;
+	border:10px solid white;
+}
+
+.triangleGhost:hover {
+	z-index: 100;
+	opacity:1;
+    -webkit-transition: all 1s ease-in;
+    -webkit-transform: scale(2);
+    -ms-transition: all 1s ease-in;
+    -ms-transform: scale(2);   
+    -moz-transition: all 1s ease-in;
+    -moz-transform: scale(2);
+    transition: all 1s ease-in;
+    transform: scale(2);
+  opacity:0;
+}
+
+.counterBoxGroup {
+	width:100%; 
+	height:150px;
+	background:white; 
+	z-index:95;
+	position:relative;
+}
+
+.counterBox {
+	width:250px;
+	height:100px;
+	border:1px solid #afafaf; 
+	margin-top:30px;
+}
+
+.counterTopText {
+	margin-top:20px;
+	color:#ff0000;
+	font-size:32;
+	width:100%;
+	text-align:center;
+}
+
+.counterDownText {
+	margin-top:4px;
+	color:#747474;
+	width:100%;
+	text-align: center;
+	font-size: 20px;
+}
+
+.paymentSlideContainer {
+  background: white;
+  z-index: 95;
+  position: relative;
+  width:100%;
+  height:120px;
+  overflow:hidden;
+  margin:auto; 
+  padding-top:12px; 
+  padding-bottom:12px;
+
+  transition: left .3s linear;
+  -moz-transition: left .3s linear;
+  -o-transition: left .3s linear;
+  -webkit-transition: left .3s linear;
+}
+
+@-webkit-keyframes slide-feedback-animation {
+  0% {left:0%; opacity:1;}
+  40% {left:-100%; opacity:1;}
+  100% {left:-100%; opacity:1;}
+}
+
+.paymentSlider {
+  table-layout: fixed;
+  list-style: none;
+  width:400%;
+  margin-top:20px;
+  height:80px;
+  position: absolute;
+  -webkit-animation: slide-img-animation 15s infinite;
+}
+
+@-webkit-keyframes slide-img-animation {
+  0% {left:0%; opacity:1;}
+  32% {left:0%; opacity:1;}
+  34% {left:-100%; opacity:1;}
+  65% {left:-100%; opacity:1;}
+  67% {left:-200%; opacity:1;}
+  98% {left:-200%; opacity:1;}
+  99.9% {left:-300%; opacity:1;}
+  100% {left:0%; opacity:1;}
+}
+
+.cube_bc {
+  width:100px;
+  height:100px;
+
+  position: relative;
+  transform-style: preserve-3d;
+
+  perspective: none;
+  perspective-origin: 0 0;
+  animation: right_cube 4s infinite linear;
+}
+
+@keyframes right_cube {
+  from { transform: rotateY(0); }
+  to { transform: rotateY(360deg); }
+}
+
+.cube_bc div {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+}
+
+.cb_bc_front {
+  transform: translateZ(50px);
+  animation: cb_bc_front 12s infinite linear;
+}
+.cb_bc_left {
+  transform: rotateY(270deg) translateX(-50px);
+  animation: cb_bc_left 12s infinite linear;  
+  transform-origin: center left;
+}
+.cb_bc_back {
+  transform: translateZ(-50px) rotateY(180deg);
+  animation: cb_bc_back 12s infinite linear;  
+}
+.cb_bc_right {
+  transform: rotateY(-270deg) translateX(50px);
+  transform-origin: top right;
+  animation: cb_bc_right 12s infinite linear;  
+}
+
+@-webkit-keyframes cb_bc_front {
+  0% {background:url("../images/blockChain03.png");}
+  16.6% {background:url("../images/blockChain03.png");}
+
+  16.7% {background:white;}
+  25% {background:white;}
+
+  25.1% {background:url("../images/blockChain/ETC_C.png");}
+  42.4% {background:url("../images/blockChain/ETC_C.png");}
+
+  42.5% {background:white;}
+  58.6% {background:white;}
+
+  58.7% {background:url("../images/blockChain/XRP_C.png");}
+  75% {background:url("../images/blockChain/XRP_C.png");}
+
+  75.1% {background:white;}
+  92.6% {background:white;}
+
+  92.7% {background:url("../images/blockChain03.png");}
+  100% {background:url("../images/blockChain03.png");}
+}
+
+@-webkit-keyframes cb_bc_left {
+  0% {background:url("../images/blockChain/XBT_C.png");}
+  16.6% {background:url("../images/blockChain/XBT_C.png");}
+
+  17% {background:white;}
+  33.3% {background:white;}
+
+  33.4% {background:url("../images/blockChain/XMR_C.png");}
+  49.8% {background:url("../images/blockChain/XMR_C.png");}a
+
+  49.9% {background:white;}
+  66.9% {background:white;}
+
+  67% {background:url("../images/blockChain/XLM_C.png");}
+  83.6% {background:url("../images/blockChain/XLM_C.png");}
+
+  100% {background:white;}
+}
+
+@-webkit-keyframes cb_bc_back {
+  0% {background:white;}
+  8.9% {background:white;}
+
+  9% {background:url("../images/blockChain/LTC_C.png");}
+  25.4% {background:url("../images/blockChain/LTC_C.png");}
+
+  25.5% {background:white;}
+  41.5% {background:white;}
+
+  41.6% {background:url("../images/blockChain/ZEC_C.png");}
+  57.9% {background:url("../images/blockChain/ZEC_C.png");}
+
+  60% {background:white;}
+  75.9% {background:white;}
+
+  76% {background:url("../images/blockChain/REP_C.png");}
+  92% {background:url("../images/blockChain/REP_C.png");}
+
+  92.1% {background:white;}
+  100% {background:white;}
+}
+
+@-webkit-keyframes cb_bc_right {
+  0% {background:white;}
+  17% {background:white;}
+
+  17.1% {background:url("../images/blockChain/ETH_C.png");}
+  35% {background:url("../images/blockChain/ETH_C.png");}
+
+  35.1% {background:white;}
+  49.9% {background:white;}
+
+  50% {background:url("../images/blockChain/DASH_C.png");}
+  66.6% {background:url("../images/blockChain/DASH_C.png");}
+
+  66.7% {background:white;}
+  83% {background:white;}
+
+  83.1% {background:url("../images/blockChain/GNO_C.png");}
+  99.9% {background:url("../images/blockChain/GNO_C.png");}
+
+  100% {background:white;}
+}
+
+.cube_pay {
+  width:100px;
+  height:100px;
+
+  position: relative;
+  transform-style: preserve-3d;
+
+  perspective: none;
+  perspective-origin: 0 0;
+  animation: right_cube 3s infinite linear;
+}
+
+.cube_pay div {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+}
+
+.cb_pay_front {
+  transform: translateZ(50px);
+  animation: cb_pay_front 12s infinite linear;
+}
+.cb_pay_left {
+  transform: rotateY(270deg) translateX(-50px);
+  transform-origin: center left;
+  animation: cb_pay_left 12s infinite linear;
+}
+.cb_pay_back {
+  transform: translateZ(-50px) rotateY(180deg);
+  animation: cb_pay_back 12s infinite linear;
+}
+.cb_pay_right {
+  transform: rotateY(-270deg) translateX(50px);
+  transform-origin: top right;
+  animation: cb_pay_right 12s infinite linear;
+}
+
+@-webkit-keyframes cb_pay_front {
+  0% {background:url("../images/paypal03.png");}
+  12.4% {background:url("../images/paypal03.png");}
+
+  12.5% {background:white;}
+  18.7% {background:white;}
+
+  18.8% {background:url("../images/sepa03.png");}
+  31.2% {background:url("../images/sepa03.png");}
+
+  31.3% {background:white;}
+  42.7% {background:white;}
+
+  42.8% {background:url("../images/skrill03.png");}
+  56.2% {background:url("../images/skrill03.png");}
+
+  56.3% {background:white;}
+  68.7% {background:white;}
+
+  68.8% {background:url("../images/webMoney03.png");}
+  81.3% {background:url("../images/webMoney03.png");}
+
+  81.4% {background:white;}
+  93.7% {background:white;}
+
+  93.8% {background:url("../images/paypal03.png");}
+  100% {background:url("../images/paypal03.png");}
+}
+
+@-webkit-keyframes cb_pay_left {
+  0% {background:url("../images/visa03.png");}
+  12.4% {background:url("../images/visa03.png");}
+
+  12.5% {background:white;}
+  24.9% {background:white;}
+
+  25% {background:url("../images/wireTransfer03.png");}
+  37.4% {background:url("../images/wireTransfer03.png");}
+
+  37.5% {background:white;}
+  49.9% {background:white;}
+
+  50% {background:url("../images/neteuer03.png");}
+  62.4% {background:url("../images/neteuer03.png");}
+
+  62.5% {background:white;}
+  74.9% {background:white;}
+
+  75% {background:url("../images/neosurf03.png");}
+  87.5% {background:url("../images/neosurf03.png");}
+
+  87.6% {background:white;}
+  100% {background:white;}
+}
+
+@-webkit-keyframes cb_pay_back {
+  0% {background:url("../images/laPost03.png");}
+  18.7% {background:url("../images/laPost03.png");}
+
+  18.8% {background:white;}
+  31.2% {background:white;}
+
+  31.3% {background:url("../images/sofort03.png");}
+  43.7% {background:url("../images/sofort03.png");}
+
+  43.8% {background:white;}
+  56.2% {background:white;}
+
+  56.3% {background:url("../images/perfectMoney03.png");}
+  68.7% {background:url("../images/perfectMoney03.png");}
+
+  68.8% {background:white;}
+  81.2% {background:white;}
+
+  81.3% {background:url("../images/paysafecard03.png");}
+  93.8% {background:url("../images/paysafecard03.png");}
+
+  93.9% {background:white;}
+  100% {background:white;}
+}
+
+@-webkit-keyframes cb_pay_right {
+  0% {background:url("../images/westernUnion03.png");}
+  24.9% {background:url("../images/westernUnion03.png");}
+
+  25% {background:white;}
+  37.4% {background:white;}
+
+  37.5% {background:url("../images/giroPay03.png");}
+  49.9% {background:url("../images/giroPay03.png");}
+
+  50% {background:white;}
+  62.4% {background:white;}
+
+  62.5% {background:url("../images/okPay03.png");}
+  74.9% {background:url("../images/okPay03.png");}
+
+  75% {background:white;}
+  87.4% {background:white;}
+
+  87.5% {background:url("../images/cash03.png");}
+  99.9% {background:url("../images/cash03.png");}
+
+  100% {background:white;}
+}
+
+.paymentSliderCell {
+  width:198px;
+  height:50px;
+  cursor:pointer;
+}
+
+.payPalSlider {
+  background: url("../images/slide-paypal.png"); 
+}
+
+.payPalSlider:hover {
+  background: url("../images/slide-paypal_cur.png");
+}
+
+.visaSlider {
+  background: url("../images/slide-visa.png"); 
+}
+
+.visaSlider:hover {
+  background: url("../images/slide-visa_cur.png");
+}
+
+.laPoste {
+  background: url("../images/slide-laPoste.png");
+}
+
+.laPoste:hover {
+  background: url("../images/slide-laPoste_cur.png");
+}
+
+.westernSlider {
+  background: url("../images/slide-westernUnion.png"); 
+}
+
+.westernSlider:hover {
+  background: url("../images/slide-westernUnion_cur.png");
+}
+
+.sofortSlider {
+  background: url("../images/slide-sofort.png"); 
+}
+
+.sofortSlider:hover {
+  background: url("../images/slide-sofort_cur.png");
+}
+
+.sepaSlider {
+  background: url("../images/slide-sepa.png"); 
+}
+
+.sepaSlider:hover {
+  background: url("../images/slide-sepa_cur.png");
+}
+
+.wireTransferSlider {
+  background: url("../images/slide-wireTransfer.png"); 
+}
+
+.wireTransferSlider:hover {
+  background: url("../images/slide-wireTransfer_cur.png");
+}
+
+.skrillSlider {
+  background: url("../images/slide-skrill.png"); 
+}
+
+.skrillSlider:hover {
+  background: url("../images/slide-skrill_cur.png");
+}
+
+.neteuseSlider {
+  background: url("../images/slide-neteuer.png"); 
+}
+
+.neteuseSlider:hover {
+  background: url("../images/slide-neteuer_cur.png");
+}
+
+.ueosurfSlider {
+  background: url("../images/slide-neosurf.png"); 
+}
+
+.ueosurfSlider:hover {
+  background: url("../images/slide-neosurf_cur.png");
+}
+
+.paySafeSlider {
+  background: url("../images/slide-paySafe.png"); 
+}
+
+.paySafeSlider:hover {
+  background: url("../images/slide-paySafe_cur.png");
+}
+
+.perfectMoneySlider {
+  background: url("../images/slide-perfectMoney.png"); 
+}
+
+.perfectMoneySlider:hover {
+  background: url("../images/slide-perfectMoney_cur.png");
+}
+
+.webMoneySlider {
+  background: url("../images/slide-webMoney.png"); 
+}
+
+.webMoneySlider:hover {
+  background: url("../images/slide-webMoney_cur.png");
+}
+
+.okPaySlider {
+  background: url("../images/slide-okPay.png"); 
+}
+
+.okPaySlider:hover {
+  background: url("../images/slide-okPay_cur.png");
+}
+
+.giroPaySlider {
+  background: url("../images/slide-giroPay.png"); 
+}
+
+.giroPaySlider:hover {
+  background: url("../images/slide-giroPay_cur.png");
+}
+
+.feedbackFrame {
+  width:100%;
+  margin:auto;
+  margin-top:45px;
+  background: #779aa3;
+  color: white;
+  padding-bottom:60px;
+  overflow: hidden;
+}
+
+.feedbackMark {
+  padding-bottom:25px;
+  margin-top:50px;
+  width:100%;
+  text-align:center;
+  font-size:34px;
+}
+
+.feedbackgroup {
+  padding-bottom:25px;
+}
+
+.feedbackBlock {
+  width:40%;
+  height:120px;
+  padding-top:20px;
+  padding-bottom:10px;
+  color: white;
+}
+
+.feedbackName {
+  font-size:26px;
+  padding-left:25px;
+  float:left;
+}
+
+.feedbackProp {
+  width: 50%;
+  font-size:18px;
+  text-align: left;
+  float:left;
+  padding-top:8px;
+}
+
+.feedbackContent {
+  color: white;
+}
+
+.prevNextButton {
+  font-size:25px;
+  cursor:pointer;
+  /*color:#b9cbce;*/
+  color:white;
+  cursor:pointer;
+}
+
+.prevNextButton:hover {
+  color:red;
+}
+
+.selFedBtn {
+  width: 8px;
+  height: 8px;
+  border-radius: 3px;
+  border:1px solid #d5dfe1;
+}
+
+.selFedBtnSel {
+  width: 8px;
+  height: 8px;
+  border-radius: 3px;
+  border:1px solid #d5dfe1;
+  background: #b9cbce;
+}
+
+.selFedBtn:hover {
+  background: #b9cbce;
+  cursor:pointer;
+}
+
+.blogTimeLineDiv {
+  background: #0077a8;
+  text-align:center;
+  padding-top:5px;
+  padding-bottom:5px;
+  color:white;
+}
+
+.blogTimeLineLine {
+  border-right:1px solid #0077a8;
+  height:100px;
+  padding:0px;
+  margin:0px;
+}
+
+.blogTimeLineBlinkDiv {
+  border: 1px solid #0077a8;
+  text-align:center;
+  padding-top:5px;
+  padding-bottom:5px;
+  color:#0077a8;
+}

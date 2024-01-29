@@ -1,0 +1,47 @@
+.rdw-editor-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.rdw-editor-main {
+  width: 100%;
+  min-height: 5em;
+}
+
+.rdw-option-wrapper[title="Embedded"],
+.rdw-option-wrapper[title="Image"],
+.rdw-option-wrapper[title="Remove"] {
+  display: none;
+}
+
+.rdw-colorpicker-wrapper {
+  order: 1;
+}
+.rdw-inline-wrapper {
+  order: 2;
+}
+.rdw-block-wrapper {
+  order: 3;
+}
+.rdw-fontsize-wrapper {
+  order: 4;
+}
+.rdw-fontfamily-wrapper {
+  order: 5;
+}
+.rdw-list-wrapper {
+  order: 6;
+}
+.rdw-text-align-wrapper {
+  order: 7;
+}
+.rdw-link-wrapper {
+  order: 8;
+}
+.rdw-emoji-wrapper {
+  order: 9;
+}
+.rdw-history-wrapper {
+  order: 10;
+}
