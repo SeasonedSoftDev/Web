@@ -1,0 +1,17 @@
+export const DCompanyTitles = [
+  'Founder/Co-founder',
+  'Executive',
+  'Marketing Manager',
+  'Clinical Research Manager',
+  'Sales Manager',
+  'Regulatory Affairs Manager',
+  'Business Development Manager',
+  'Quality Assurance Manager',
+  'IT Manager',
+  'Operations Manager',
+  'Customer Experience Manager',
+  'Communications/Public Relations Manager',
+  'Data Scientist/Data Analyst',
+  'Human Resources Manager',
+  'Other',
+];

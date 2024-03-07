@@ -1,0 +1,16 @@
+version: '3.8'
+services:
+  test-db:
+    container_name: patients-influence-test-db
+    image: postgres:latest
+    env_file:
+      - ../env/.env.test
+    ports:
+      - '${POSTGRES_PORT:-5432}:5432'
+    volumes:
+      - ./.dockerdata/test-db:/var/lib/postgresql/data
+    networks:
+      - patients-influence-test
+
+networks:
+  patients-influence-test:

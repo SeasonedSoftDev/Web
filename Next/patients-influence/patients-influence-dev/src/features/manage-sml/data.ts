@@ -1,0 +1,37 @@
+export const DGenerateManageSMLFilter = () => ({
+  stakeholder: null,
+  gender: null,
+  diseaseArea: null,
+  location: null,
+  ethnicity: null,
+  age: {
+    min: '',
+    max: '',
+  },
+  struggles: null,
+  symptoms: null,
+  interests: null,
+  bio: '',
+
+  socialMedia: null,
+  theme: null,
+  diseaseAreaBA: null,
+  struggle: null,
+  symptom: null,
+  interestBA: null,
+  sentiment: null,
+  language: null,
+  brand: null,
+  product: null,
+  likes: {
+    min: '',
+    max: '',
+  },
+  comments: {
+    min: '',
+    max: '',
+  },
+  startDate: null,
+  endDate: null,
+  keyword: '',
+});

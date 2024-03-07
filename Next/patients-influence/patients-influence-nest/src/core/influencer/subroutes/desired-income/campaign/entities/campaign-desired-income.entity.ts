@@ -1,0 +1,26 @@
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
+import { InfluencerCampaignAmount } from '@prisma/client';
+import { Exclude, Transform } from 'class-transformer';
+import { Decimal } from '@prisma/client/runtime';
+
+export class CampaignDesiredIncomeEntity implements InfluencerCampaignAmount {
+  id: number;
+
+  @ApiHideProperty()
+  @Exclude()
+  influencerId: number;
+
+  postType: number;
+
+  @ApiProperty({ type: Number })
+  @Transform((obj) => obj.value.toNumber(), { toPlainOnly: true })
+  desiredAmount: Decimal;
+
+  createdAt: Date;
+
+  updatedAt: Date;
+
+  constructor({ ...data }: Partial<CampaignDesiredIncomeEntity>) {
+    Object.assign(this, data);
+  }
+}

@@ -1,0 +1,18 @@
+export const DSymptoms = [
+  'Respiratory',
+  'Gastrointestinal',
+  'Cardiovascular',
+  'Pain and Discomfort',
+  'Neurological',
+  'Emotional and Mental',
+  'Sleep Disturbances',
+  'Dermatological',
+  'Immune System',
+  'Oral, dental and Throat',
+  'Musculoskeletal',
+  'Sensory',
+  'Hematological',
+  'Urinary and Renal',
+  'Endocrine and Metabolic',
+  'Reproductive and Sexual',
+];

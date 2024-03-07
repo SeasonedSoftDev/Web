@@ -1,0 +1,77 @@
+{
+  "common": {
+    "email": {
+      "dear": "Sehr geehrte/r %{firstName},",
+      "best": "Mit freundlichen Grüßen,",
+      "kindRegards": "Mit freundlichen Grüßen,",
+      "team": "Das Patients Influence Team",
+      "login": "/de-DE/login",
+      "register": "/de-DE/register",
+      "resetPassword": "/de-DE/reset-password"
+    },
+    "resetPassword": {
+      "subject": "Anforderung zum Zurücksetzen des Passworts",
+      "greet": "Sehr geehrte(r) %{firstName},",
+      "received": "Wir haben eine Anforderung zum Zurücksetzen des Passworts für Ihr Konto erhalten. Wenn Sie diese Anforderung nicht gestellt haben, können Sie diese E-Mail sicher ignorieren.",
+      "toReset": "Klicken Sie auf den untenstehenden Button, um Ihr Passwort zurückzusetzen:",
+      "resetButton": "Passwort zurücksetzen",
+      "expires": "Dieser Link ist für 30 Minuten gültig. Wenn Sie einen neuen Link zum Zurücksetzen des Passworts benötigen, besuchen Sie einfach %{loginLink} und folgen Sie den Schritten.",
+      "concerns": "Wenn Sie Fragen oder Bedenken haben, wenden Sie sich bitte an support@patientsinfluence.com",
+      "tokenExpired": "Token abgelaufen, bitte fordern Sie ein neues Token an, um Ihre E-Mail zu bestätigen.",
+      "success": "Das Passwort wurde erfolgreich geändert."
+    },
+    "resendVerificationEmail": {
+      "attemptsExhausted": "Maximale Wiederholungsversuche erschöpft. Bitte kontaktieren Sie den Administrator unter: support@patientsinfluence.com."
+    }
+  },
+  "influencer": {
+    "email": {
+      "register": {
+        "subject": "Maßnahme erforderlich: Bestätigen Sie Ihr Patients Influence-Konto",
+        "thankYou": "vielen Dank für Ihre Registrierung bei Patients Influence.",
+        "pleaseClick": "Bitte klicken Sie auf den folgenden Link, um Ihre E-Mail zu bestätigen und Ihr Konto zu aktivieren:",
+        "confirmEmailButton": "Bestätigungs-E-Mail"
+      },
+      "confirm": {
+        "subject": "Willkommen bei Patients Influence - Ihr Konto ist jetzt aktiv!",
+        "excited": "Wir freuen uns, Ihnen mitteilen zu können, dass Ihre E-Mail erfolgreich bestätigt wurde und Ihr Patients Influence-Konto nun aktiv ist!",
+        "asAMember": "Als Mitglied unserer Plattform gehören Sie zu den ersten, die Zugang zu unserer Plattform haben, die darauf abzielt, Healthcare-Unternehmen mit Patienten-Influencern zu verbinden, um die Gesundheitsversorgung zu verbessern und Patienten zu ermächtigen, zusätzliches Einkommen zu verdienen.",
+        "affiliate": "Wir möchten Sie darauf hinweisen, dass wir derzeit daran arbeiten, unsere Plattform aufzubauen, und schätzen Ihre Geduld, während wir uns bemühen, sie so gut wie möglich zu gestalten. In der Zwischenzeit möchten wir Ihnen die Möglichkeit geben, Ihr Verdienstpotential zu starten, indem Sie Ihren einzigartigen Affiliate-Link %{affiliateLink} teilen, den Sie mit anderen teilen können, und zusätzliche 1% Bonus auf alle Einkünfte erhalten, die sie auf unserer Plattform erzielen."
+      }
+    }
+  },
+  "company": {
+    "email": {
+      "register": {
+        "subject": "Maßnahme erforderlich: Bestätigen Sie Ihr Patients Influence-Konto",
+        "thankYou": "vielen Dank für Ihre Registrierung bei Patients Influence.",
+        "pleaseClick": "Bitte klicken Sie auf den folgenden Link, um Ihre E-Mail zu bestätigen und Ihr Konto zu aktivieren:",
+        "confirmEmailButton": "Bestätigungs-E-Mail"
+      },
+      "confirm": {
+        "subject": "Willkommen bei Patients Influence - Ihr Konto ist jetzt aktiv!",
+        "thankYou": "Vielen Dank für Ihre Registrierung bei Patients Influence.",
+        "excited": "Wir freuen uns, Ihnen mitteilen zu können, dass unser Plattform im abschließenden Entwicklungsstadium ist. Wir arbeiten an einer fortschrittlichen, branchenführenden Plattform, die den Weg für Healthcare-Unternehmen verändern wird, um mit Patienten-Influencern zu verbinden und einen echten Einfluss auf die Gesundheitsbranche zu haben. Wir schätzen Ihre Unterstützung, während wir diese Plattform zum Leben erwecken."
+      }
+    }
+  },
+  "resetPassword": {
+    "errorMessage": "Wenn die von Ihnen eingegebene E-Mail-Adresse gültig ist, sollten Sie eine E-Mail mit einem Link zum Zurücksetzen Ihres Passworts erhalten. Wenn Sie die E-Mail nicht erhalten haben, überprüfen Sie bitte die eingegebene E-Mail-Adresse oder Ihren Spam-Ordner."
+  },
+  "error": {
+    "message": {
+      "login": {
+        "incorrect": "Die Kombination aus E-Mail-Adresse und Passwort, die Sie eingegeben haben, ist falsch. Bitte versuchen Sie es erneut oder setzen Sie Ihr Passwort zurück.",
+        "pleaseConfirm": "Bitte bestätigen Sie Ihre E-Mail-Adresse, um den Anmeldevorgang abzuschließen."
+      },
+      "signup": {
+        "accountExist": "Die E-Mail-Adresse ist bereits vorhanden. Bitte versuchen Sie es erneut mit einer anderen E-Mail oder melden Sie sich bei Ihrem bestehenden Konto an."
+      },
+      "somethingWentWrong": "Etwas ist schief gelaufen. Bitte versuche es erneut. Wenn dieser Fehler weiterhin besteht, kontaktieren Sie bitte unseren Support unter support@patientsinfluence.com.",
+      "resendVerificationEmail": "Wenn die von Ihnen eingegebene E-Mail-Adresse gültig ist, sollten Sie eine E-Mail mit einem Link zur Bestätigung Ihres Kontos erhalten. Wenn Sie die E-Mail nicht erhalten haben, überprüfen Sie die angegebene E-Mail-Adresse oder den Spam-Ordner.",
+      "issuePersists": "Wenn dieser Fehler weiterhin besteht, kontaktieren Sie bitte unseren Support unter support@patientsinfluence.com.",
+      "resetPassword": "Wenn die von Ihnen eingegebene E-Mail-Adresse gültig ist, sollten Sie eine E-Mail mit einem Link zum Zurücksetzen Ihres Passworts erhalten. Wenn Sie die E-Mail nicht erhalten haben, überprüfen Sie bitte die eingegebene E-Mail-Adresse oder Ihren Spam-Ordner.",
+      "sendingVerificationFailed": "Senden der Bestätigungs-E-Mail fehlgeschlagen, bitte versuchen Sie es erneut."
+    }
+  }
+}

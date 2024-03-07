@@ -1,0 +1,50 @@
+version: '3.8'
+services:
+  prod-db:
+    container_name: patients-influence-prod-db
+    image: postgres:latest
+    env_file:
+      - ../env/.env.prod
+    ports:
+      - '${POSTGRES_PORT:-5432}:${POSTGRES_PORT:-5432}'
+    volumes:
+      - ./.dockerdata/prod-db:/var/lib/postgresql/data
+    networks:
+      - patients-influence-prod
+
+  prod-api:
+    container_name: patients-influence-prod-api
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile
+    restart: 'on-failure:3'
+    env_file:
+      - ../env/.env.prod
+    ports:
+      - '${PORT:-3000}:${PORT:-3000}'
+    depends_on:
+      - prod-db
+    command: sh -c 'while ! nc -z patients-influence-prod-db ${POSTGRES_PORT:-5432}; do sleep 1; done; npm start'
+    networks:
+      - patients-influence-prod
+
+  prod-pgadmin:
+    container_name: patients-influence-prod-pgadmin
+    image: dpage/pgadmin4
+    env_file:
+      - ../env/.env.prod
+    ports:
+      - '5050:80'
+    depends_on:
+      - prod-db
+    volumes:
+      - ./.dockerdata/prod-pgadmin:/var/lib/pgadmin
+    networks:
+      - patients-influence-prod
+
+volumes:
+  dbdata:
+  pgadmindata:
+
+networks:
+  patients-influence-prod:

@@ -1,0 +1,77 @@
+{
+  "common": {
+    "email": {
+      "dear": "Dear %{firstName},",
+      "best": "Best,",
+      "kindRegards": "Kind regards,",
+      "team": "The Patience Influence Team",
+      "login": "/login",
+      "register": "/register",
+      "resetPassword": "/reset-password"
+    },
+    "resetPassword": {
+      "subject": "Password Reset Request",
+      "greet": "Hello %{firstName},",
+      "received": "We received a request to reset the password for your account. If you didn't make this request, you can safely ignore this email.",
+      "toReset": "To reset your password, click the button below:",
+      "resetButton": "Reset password",
+      "expires": "This link will expire in 30 minutes. If you need a new password reset link, simply visit %{loginLink} and follow the steps.",
+      "concerns": "If you have any questions or concerns, please feel free to contact us at support@patientsinfluence.com.",
+      "tokenExpired": "Token expired, please request new token in order to verify your email.",
+      "success": "Password changed successfully."
+    },
+    "resendVerificationEmail": {
+      "attemptsExhausted": "Maximum retry attempts exhausted. Please contact administrator at: support@patientsinfluence.com."
+    }
+  },
+  "influencer": {
+    "email": {
+      "register": {
+        "subject": "Action Required: Confirm your Patients Influence Account",
+        "thankYou": "Thank you for registering with Patients Influence.",
+        "pleaseClick": "Please click on the link below to confirm your email and activate your account:",
+        "confirmEmailButton": "Confirm Email"
+      },
+      "confirm": {
+        "subject": "Welcome to Patients Influence - Your Account is Now Active!",
+        "excited": "We are excited to let you know that your email has been successfully confirmed and your Patients Influence account is now active!",
+        "asAMember": "As a member of our platform, you will be among the first to access our platform, which aims to connect healthcare companies with patient influencers in order to improve healthcare and empower patients to earn additional income.",
+        "affiliate": "We want to let you know that we are currently in the process of building our platform, and we appreciate your patience as we work to make it the best it can be. In the meantime, we want to give you the opportunity to jumpstart your earning potential by sharing your unique affiliate link %{affiliateLink}, which you can share with others, and receive an additional 1% bonus on all the earnings they make on our platform."
+      }
+    }
+  },
+  "company": {
+    "email": {
+      "register": {
+        "subject": "Action Required: Confirm your Patients Influence Account",
+        "thankYou": "Thank you for registering with Patience Influence.",
+        "pleaseClick": "Please click on the link below to confirm your email and activate your account:",
+        "confirmEmailButton": "Confirm Email"
+      },
+      "confirm": {
+        "subject": "Welcome to Patients Influence - Your Account is Now Active!",
+        "thankYou": "Thank you for logging into your Patients Influence account.",
+        "excited": "We are excited to announce that our platform is in its final stages of development. We are creating a cutting-edge, industry-leading platform that will transform the way healthcare companies connect with patient influencers, and create a real impact in the healthcare industry. We appreciate your support as we bring this platform to life."
+      }
+    }
+  },
+  "resetPassword": {
+    "errorMessage": "If the email address you entered is valid, you should receive an email with a link to reset your password. If you did not receive the email, please double check the email you entered or your spam folder."
+  },
+  "error": {
+    "message": {
+      "login": {
+        "incorrect": "The email address and password combination you entered is incorrect. Please try again or reset your password.",
+        "pleaseConfirm": "Please confirm your e-mail address in order to complete the sign-up process."
+      },
+      "signup": {
+        "accountExist": "Email address already exists. Please try again with a different email or log in to your existing account."
+      },
+      "somethingWentWrong": "Something went wrong, please try again. If this error persists, please contact our support at support@patientsinfluence.com.",
+      "resendVerificationEmail": "If the email you entered is valid, you should receive an email with a link to verify your account. If you haven't received the email, double check the email you provided or spam folder.",
+      "issuePersists": "If this error persists, please contact our support at support@patientsinfluence.com.",
+      "resetPassword": "If the email address you entered is valid, you should receive an email with a link to reset your password. If you did not receive the email, please double check the email you entered or your spam folder.",
+      "sendingVerificationFailed": "Sending the verification email failed, please try again."
+    }
+  }
+}

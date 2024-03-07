@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+  dev-db:
+    container_name: patients-influence-dev-db
+    image: postgres:latest
+    env_file:
+      - ../env/.env.dev
+    ports:
+      - '${POSTGRES_PORT:-5432}:5432'
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    networks:
+      - patients-influence
+volumes:
+  postgres:
+networks:
+  patients-influence:

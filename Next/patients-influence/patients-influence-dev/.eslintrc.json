@@ -1,0 +1,91 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "extends": [
+    "plugin:react/recommended",
+    "airbnb",
+    "prettier",
+    "plugin:jest/recommended"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": 12,
+    "sourceType": "module"
+  },
+  "plugins": ["react", "@typescript-eslint", "jest"],
+  "rules": {
+    "no-throw-literal": "off",
+    "no-use-before-define": "off",
+    "@typescript-eslint/no-use-before-define": ["error"],
+    "react/jsx-filename-extension": [
+      2,
+      {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      }
+    ],
+    "react/function-component-definition": [
+      2,
+      {
+        "namedComponents": "arrow-function",
+        "unnamedComponents": "arrow-function"
+      }
+    ],
+    "import/no-unresolved": "error",
+    "react/jsx-props-no-spreading": "off",
+    "import/extensions": "off",
+    "no-param-reassign": "off",
+    "react/button-has-type": "off",
+    "import/no-cycle": "off",
+    "import/prefer-default-export": "off",
+    "no-debugger": "off",
+    "jest/no-disabled-tests": "warn",
+    "jest/no-focused-tests": "error",
+    "jest/no-identical-title": "error",
+    "jest/prefer-to-have-length": "warn",
+    "jest/valid-expect": "error",
+    "react/require-default-props": "off",
+    "no-unused-vars": "off",
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": ["@mui/*/*/*/*/*"]
+      }
+    ],
+    "@typescript-eslint/no-unused-vars": [
+      "warn", // or "error"
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "caughtErrorsIgnorePattern": "^_"
+      }
+    ],
+    // NextJS Links - ignore anchor without href
+    "jsx-a11y/anchor-is-valid": [
+      "error",
+      {
+        "components": ["Link"],
+        "specialLink": ["hrefLeft", "hrefRight"],
+        "aspects": ["invalidHref", "preferButton"]
+      }
+    ]
+  },
+  "settings": {
+    "import/parsers": {
+      "@typescript-eslint/parser": [".ts", ".tsx"]
+    },
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"],
+        "moduleDirectory": ["node_modules", "src/"]
+      }
+    },
+    "jest": {
+      "version": 26
+    }
+  }
+}

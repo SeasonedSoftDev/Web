@@ -1,0 +1,61 @@
+{
+  "user": { "write": true, "read": false, "delete": true },
+  "company": { "write": true, "read": false, "delete": true },
+  "companyTitle": { "write": true, "read": false, "delete": true },
+  "diseaseArea": { "write": true, "read": false, "delete": true },
+  "location": { "write": true, "read": false, "delete": true },
+  "label": { "write": true, "read": false, "delete": true },
+  "ethnicity": { "write": true, "read": false, "delete": true },
+  "socialPlatform": { "write": true, "read": false, "delete": true },
+  "influencersSize": { "write": true, "read": false, "delete": true },
+  "industry": { "write": true, "read": false, "delete": true },
+  "struggle": { "write": true, "read": false, "delete": true },
+  "symptom": { "write": true, "read": false, "delete": true },
+  "interest": { "write": true, "read": false, "delete": true },
+  "theme": { "write": true, "read": false, "delete": true },
+  "benefitCategory": { "write": true, "read": false, "delete": true },
+  "benefitPartnership": { "write": true, "read": false, "delete": true },
+  "stakeholder": { "write": true, "read": false, "delete": true },
+  "stakeholderPost": { "write": true, "read": false, "delete": true },
+  "currency": { "write": true, "read": false, "delete": true },
+  "platformProductOrder": { "write": true, "read": false, "delete": true },
+  "discoverClient": { "write": true, "read": false, "delete": true },
+  "legal": { "write": true, "read": false, "delete": true },
+  "platformProductOrderEthnicity": {
+    "write": true,
+    "read": false,
+    "delete": true
+  },
+  "platformProductOrderGender": {
+    "write": true,
+    "read": false,
+    "delete": true
+  },
+  "platformProductOrderStruggle": {
+    "write": true,
+    "read": false,
+    "delete": true
+  },
+  "platformProductOrderDiseaseArea": {
+    "write": true,
+    "read": false,
+    "delete": true
+  },
+  "platformProductOrderInfluencer": {
+    "write": true,
+    "read": false,
+    "delete": true
+  },
+  "platformProductOrderInterest": {
+    "write": true,
+    "read": false,
+    "delete": true
+  },
+  "platformProductOrderLocation": {
+    "write": true,
+    "read": false,
+    "delete": true
+  },
+  "platformProductsLabel": { "write": true, "read": false, "delete": true },
+  "companyProduct": { "write": true, "read": false, "delete": true }
+}

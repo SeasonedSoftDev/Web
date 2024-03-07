@@ -1,0 +1,20 @@
+{
+  "user": { "write": true },
+  "company": { "write": true },
+  "companyProduct": { "write": true },
+  "companyTitle": { "write": true },
+  "diseaseArea": { "write": true },
+  "location": { "write": true },
+  "label": { "write": true },
+  "ethnicity": { "write": true },
+  "socialPlatform": { "write": true },
+  "influencersSize": { "write": true },
+  "industry": { "write": true },
+  "struggle": { "write": true },
+  "symptom": { "write": true },
+  "interest": { "write": true },
+  "theme": { "write": true },
+  "benefitCategory": { "write": true },
+  "currency": { "write": true },
+  "legal": { "write": true }
+}

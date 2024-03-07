@@ -1,0 +1,1974 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider      = "prisma-client-js"
+  // binaryTargets = ["native", "darwin", "linux-musl"]
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                Int      @id @default(autoincrement())
+  firstName         String
+  lastName          String
+  email             String   @unique
+  emailResendTokens Int      @default(2)
+  password          String
+  locationId        Int?
+  role              Int
+  status            Int      @default(0)
+  isDeleted         Boolean  @default(false)
+  currency          Int      @default(0) // TODO move to another table
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  location                         Location?                         @relation(name: "UserToLocation", fields: [locationId], references: [id])
+  admin                            Admin?                            @relation(name: "UserToAdmin")
+  client                           Client?                           @relation(name: "UserToClient")
+  influencer                       Influencer?                       @relation(name: "UserToInfluencer")
+  ambassador                       Ambassador?                       @relation(name: "UserToAmbassador")
+  assigneeUserLabels               UserLabel[]                       @relation(name: "AssigneeUserToUserLabel")
+  assignerUserLabels               UserLabel[]                       @relation(name: "AssignerUserToUserLabel")
+  targetUserComments               UserComment[]                     @relation(name: "TargetUserCommentToUser")
+  userUserComments                 UserComment[]                     @relation(name: "UserUserCommentToUser")
+  invitedInfluencers               Influencer[]                      @relation(name: "InvitedInfluencersToUser")
+  surveyResponses                  SurveyResponse[]                  @relation(name: "UserToSurveyResponse")
+  transactionFlow                  TransactionFlow[]                 @relation(name: "UserToTransactionFlow")
+  customFinanceStatements          CustomFinanceStatement[]          @relation(name: "UserToCustomFinanceStatement")
+  platformProductOrderLabels       PlatformProductOrderLabel[]       @relation(name: "UserToPlatformProductOrderLabel")
+  platformProductOrderChatMessages PlatformProductOrderChatMessage[] @relation(name: "AuthorToPlatformProductOrderChatMessage")
+  platformProductOrderComments     PlatformProductOrderComment[]     @relation(name: "UserToPlatformProductOrderComment")
+  company                          Company[]                         @relation(name: "UserToCompany")
+  benefitSuggestions               BenefitSuggestion[]               @relation(name: "AuthorToBenefitSuggestion")
+  benefitUpvoteCounts              BenefitUpvoteCount[]              @relation(name: "UserToBenefitUpvoteCount")
+  productOrderChatRoomMember       ProductOrderChatRoomMember[]      @relation(name: "ChatRoomMemberToUser")
+  organizerEvents                  CalendarEvent[]                   @relation(name: "OrganizerToCalendarEvent")
+  creatorEvents                    CalendarEvent[]                   @relation(name: "CreatorToCalendarEvent")
+  calendarEventAttendees           CalendarEventAttendee[]           @relation(name: "UserToCalendarEventAttendee")
+  notificationUsers                NotificationUser[]                @relation(name: "UserToNotificationUser")
+  notificationPayloads             NotificationPayload[]             @relation(name: "UserToNotificationPayload")
+  notificationPayloadAdmins        NotificationPayload[]             @relation(name: "AdminToNotificationPayload")
+  notificationPayloadAmbassadors   NotificationPayload[]             @relation(name: "AmbassadorToNotificationPayload")
+  notificationPayloadInfluencers   NotificationPayload[]             @relation(name: "InfluencerToNotificationPayload")
+  notificationPayloadClients       NotificationPayload[]             @relation(name: "ClientToNotificationPayload")
+  statusChangelog                  UserStatusChangelog[]             @relation(name: "UserToUserStatusChangelog")
+  legalConsents                    UserLegalConsents[]               @relation(name: "UserToUserLegalConsent")
+  messageRead                      MessageRead[]                     @relation(name: "MessageReadToUser")
+
+  @@map("users")
+}
+
+model UserStatusChangelog {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  status    Int
+  createdAt DateTime @default(now())
+
+  user User @relation(name: "UserToUserStatusChangelog", fields: [userId], references: [id])
+
+  @@map("user_status_changelog")
+}
+
+model UserLabel {
+  id         Int      @id @default(autoincrement())
+  labelId    Int
+  assignerId Int
+  assigneeId Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  assigneeUser User  @relation(name: "AssigneeUserToUserLabel", fields: [assigneeId], references: [id]) // a person to which label is assigned
+  assignerUser User  @relation(name: "AssignerUserToUserLabel", fields: [assignerId], references: [id]) // a person that assigned the label
+  label        Label @relation(name: "LabelToUserLabel", fields: [labelId], references: [id])
+
+  @@unique([assigneeId, labelId], name: "UserLabelIdentifier")
+  @@map("user_labels")
+}
+
+model Label {
+  id           Int      @id @default(autoincrement())
+  name         String
+  assigneeType Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  userLabels                 UserLabel[]                 @relation(name: "LabelToUserLabel")
+  platformProductOrderLabels PlatformProductOrderLabel[] @relation(name: "LabelToPlatformProductOrderLabel")
+
+  @@unique([name, assigneeType], name: "LabelIdentifier")
+  @@map("labels")
+}
+
+model UserComment {
+  id        Int      @id @default(autoincrement())
+  text      String
+  userId    Int
+  targetId  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  target User @relation(name: "TargetUserCommentToUser", fields: [targetId], references: [id])
+  user   User @relation(name: "UserUserCommentToUser", fields: [userId], references: [id])
+
+  @@map("comments")
+}
+
+model Location {
+  id        Int      @id @default(autoincrement())
+  name      String
+  isCommon  Boolean  @default(false)
+  countryId Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  country                       Location?                      @relation(name: "LocationToLocation", fields: [countryId], references: [id], onDelete: Cascade)
+  cities                        Location[]                     @relation(name: "LocationToLocation")
+  users                         User[]                         @relation(name: "UserToLocation")
+  discoverClientMarkets         DiscoverClientMarket[]         @relation(name: "LocationToDiscoverClientMarket")
+  discoverClients               DiscoverClient[]               @relation(name: "LocationToDiscoverClient")
+  clientMarkets                 ClientMarket[]                 @relation(name: "LocationToClientMarket")
+  stakeholders                  Stakeholder[]                  @relation(name: "LocationToStakeholder")
+  benefitLocations              BenefitLocation[]              @relation(name: "LocationToBenefitLocation")
+  platformProductOrderLocations PlatformProductOrderLocation[] @relation(name: "LocationToPlatformProductOrderLocation")
+
+  @@unique(fields: [name, countryId])
+  @@map("locations")
+}
+
+model DiseaseArea {
+  id                  Int      @id @default(autoincrement())
+  name                String   @unique
+  isCommon            Boolean  @default(false)
+  identifier          String?  @unique
+  parentDiseaseAreaId Int?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  parentDiseaseArea                DiseaseArea?                      @relation(name: "ParentDiseaseAreaRelation", fields: [parentDiseaseAreaId], references: [id], onDelete: Cascade)
+  childDiseaseAreas                DiseaseArea[]                     @relation(name: "ParentDiseaseAreaRelation")
+  discoverClientDiseaseAreas       DiscoverClientDiseaseArea[]       @relation(name: "DiseaseAreaToDiscoverClientDiseaseArea")
+  clientDiseaseAreas               ClientDiseaseArea[]               @relation(name: "DiseaseAreaToClientDiseaseArea")
+  postDiseaseAreas                 PostDiseaseArea[]                 @relation(name: "DiseaseAreaToPostDiseaseArea")
+  patientCaregiverDiseaseAreas     PatientCaregiverDiseaseArea[]     @relation(name: "DiseaseAreaToPatientCaregiverDiseaseArea")
+  influencerDiseaseAreas           InfluencerDiseaseArea[]           @relation(name: "InfluencerDiseaseAreaToDiseaseArea")
+  platformProductOrderDiseaseAreas PlatformProductOrderDiseaseArea[] @relation(name: "DiseaseAreaToPlatformProductOrderDiseaseArea")
+
+  @@map("disease_areas")
+}
+
+model Influencer {
+  id                Int       @id @default(autoincrement())
+  userId            Int       @unique
+  invitendByUserId  Int?
+  stakeholderId     Int?
+  affiliateCode     String    @unique
+  gender            Int?
+  dateOfBirth       DateTime?
+  ethnicityId       Int?
+  type              Int?
+  instagramUsername String?   @unique
+  status            Int       @default(0)
+  verifiedSince     DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  user                                      User                                        @relation(name: "UserToInfluencer", fields: [userId], references: [id], onDelete: Cascade)
+  invitedByUser                             User?                                       @relation(name: "InvitedInfluencersToUser", fields: [invitendByUserId], references: [id])
+  ethnicity                                 Ethnicity?                                  @relation(name: "EthnicityToInfluencer", fields: [ethnicityId], references: [id])
+  influencerSurveyAmounts                   InfluencerSurveyAmount[]                    @relation(name: "InfluencerSurveyAmountToInfluencer")
+  influencerCampaignAmounts                 InfluencerCampaignAmount[]                  @relation(name: "InfluencerCampaignAmountsToInfluencer")
+  influencerFollowers                       InfluencerFollower[]                        @relation(name: "InfluencerFollowerToInfluencer")
+  influencerDiseaseAreas                    InfluencerDiseaseArea[]                     @relation(name: "InfluencerDiseaseAreaToInfluencer")
+  stakeholders                              Stakeholder[]                               @relation(name: "InfluencerToStakeholder")
+  campaignInfluencerPerformances            CampaignInfluencerPerformance[]             @relation(name: "InfluencerToCampaignInfluencerPerformance")
+  platformProductOrderInfluencers           PlatformProductOrderInfluencer[]            @relation(name: "InfluencerToPlatformProductOrderInfluencer")
+  influencerFollowersDistributionInfluencer InfluencerFollowersDistributionInfluencer[] @relation(name: "InfluencerFollowersDistributionInfluencerToInfluencer")
+
+  @@map("influencers")
+}
+
+model InfluencerSurveyAmount {
+  id            Int      @id @default(autoincrement())
+  influencerId  Int
+  surveyType    Int
+  desiredAmount Decimal
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  influencer             Influencer                        @relation(name: "InfluencerSurveyAmountToInfluencer", fields: [influencerId], references: [id], onDelete: Cascade)
+  desiredAmountChangelog InfluencerSurveyAmountChangelog[] @relation(name: "InfluencerSurveyAmountToInfluencerSurveyAmountChangelog")
+
+  @@unique([influencerId, surveyType], name: "InfluencerSurveyAmountIdentifier")
+  @@map("influencer_survey_amounts")
+}
+
+model InfluencerSurveyAmountChangelog {
+  id                       Int      @id @default(autoincrement())
+  influencerSurveyAmountId Int
+  desiredAmount            Decimal
+  createdAt                DateTime @default(now())
+
+  influencerSurveyAmount InfluencerSurveyAmount @relation(name: "InfluencerSurveyAmountToInfluencerSurveyAmountChangelog", fields: [influencerSurveyAmountId], references: [id])
+
+  @@map("influencer_survey_amount_changelog")
+}
+
+model InfluencerCampaignAmount {
+  id            Int      @id @default(autoincrement())
+  influencerId  Int
+  postType      Int
+  desiredAmount Decimal
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  influencer             Influencer                          @relation(name: "InfluencerCampaignAmountsToInfluencer", fields: [influencerId], references: [id], onDelete: Cascade)
+  desiredAmountChangelog InfluencerCampaignAmountChangelog[] @relation(name: "InfluencerSurveyAmountToInfluencerCampaignAmountChangelog")
+
+  @@unique([influencerId, postType], name: "InfluencerCampaignAmountIdentifier")
+  @@map("influencer_campaign_amounts")
+}
+
+model InfluencerCampaignAmountChangelog {
+  id                         Int      @id @default(autoincrement())
+  influencerCampaignAmountId Int
+  desiredAmount              Decimal
+  createdAt                  DateTime @default(now())
+
+  influencerCampaignAmount InfluencerCampaignAmount @relation(name: "InfluencerSurveyAmountToInfluencerCampaignAmountChangelog", fields: [influencerCampaignAmountId], references: [id])
+
+  @@map("influencer_campaign_amount_changelog")
+}
+
+model InfluencerFollower {
+  id            Int      @id @default(autoincrement())
+  influencerId  Int
+  stakeholderId Int
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  influencer  Influencer  @relation(name: "InfluencerFollowerToInfluencer", fields: [influencerId], references: [id], onDelete: Cascade)
+  stakeholder Stakeholder @relation(name: "InfluencerFollowerToStakeholder", fields: [stakeholderId], references: [id], onDelete: Cascade)
+
+  @@unique([influencerId, stakeholderId], name: "InfluencerFollowerIdentifier")
+  @@map("influencer_followers")
+}
+
+model InfluencerDiseaseArea {
+  id            Int      @id @default(autoincrement())
+  influencerId  Int
+  diseaseAreaId Int
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  influencer  Influencer  @relation(name: "InfluencerDiseaseAreaToInfluencer", fields: [influencerId], references: [id], onDelete: Cascade)
+  diseaseArea DiseaseArea @relation(name: "InfluencerDiseaseAreaToDiseaseArea", fields: [diseaseAreaId], references: [id], onDelete: Cascade)
+
+  @@unique([influencerId, diseaseAreaId], name: "InfluencerDiseaseAreaIdentifier")
+  @@map("influencer_disease_areas")
+}
+
+model Admin {
+  id          Int      @id @default(autoincrement())
+  userId      Int      @unique
+  isSuperuser Boolean  @default(false)
+  isAIBot     Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user             User              @relation(name: "UserToAdmin", fields: [userId], references: [id], onDelete: Cascade)
+  adminRoles       AdminRole[]       @relation(name: "AdminToAdminRole")
+  adminPermissions AdminPermission[] @relation(name: "AdminToAdminPermission")
+  ambassador       Ambassador[]      @relation(name: "AdminToAmbassador")
+
+  @@map("admins")
+}
+
+model AdminRole {
+  id        Int      @id @default(autoincrement())
+  adminId   Int
+  roleId    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  admin Admin        @relation(name: "AdminToAdminRole", fields: [adminId], references: [id])
+  role  PlatformRole @relation(name: "PlatformRoleToAdmin", fields: [roleId], references: [id])
+
+  @@unique([adminId, roleId], name: "AdminRoleIdentifier")
+  @@map("admin_roles")
+}
+
+model PlatformRole {
+  id        Int      @id @default(autoincrement())
+  role      Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  adminRoles      AdminRole[]      @relation(name: "PlatformRoleToAdmin")
+  rolePermissions RolePermission[] @relation(name: "RoleToRolePermission")
+
+  @@map("platform_roles")
+}
+
+model AdminPermission {
+  id           Int      @id @default(autoincrement())
+  adminId      Int
+  permissionId Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  admin      Admin      @relation(name: "AdminToAdminPermission", fields: [adminId], references: [id])
+  permission Permission @relation(name: "PermissionToAdminPermission", fields: [permissionId], references: [id])
+
+  @@unique([adminId, permissionId], name: "AdminPermissionIdentifier")
+  @@map("admin_permissions")
+}
+
+model Permission {
+  id         Int      @id @default(autoincrement())
+  permission String   @unique
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  rolePermissions  RolePermission[]  @relation(name: "PermissionToRolePermission")
+  adminPermissions AdminPermission[] @relation(name: "PermissionToAdminPermission")
+
+  @@map("permissions")
+}
+
+model RolePermission {
+  id           Int      @id @default(autoincrement())
+  roleId       Int
+  permissionId Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  role       PlatformRole @relation(name: "RoleToRolePermission", fields: [roleId], references: [id])
+  permission Permission   @relation(name: "PermissionToRolePermission", fields: [permissionId], references: [id])
+
+  @@unique([roleId, permissionId], name: "RolePermissionIdentifier")
+  @@map("role_permissions")
+}
+
+model CompanyTitle {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  clients         Client[]         @relation(name: "CompanyTitleToClient")
+  discoverClients DiscoverClient[] @relation(name: "CompanyTitleToDiscoverClient")
+  ambassadors     Ambassador[]     @relation(name: "CompanyTitleToAmbassador")
+
+  @@map("company_titles")
+}
+
+model Company {
+  id              Int      @id @default(autoincrement())
+  name            String   @unique
+  createdByUserId Int?
+  isCommon        Boolean  @default(false)
+  isApproved      Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  createdByUser   User?            @relation(name: "UserToCompany", fields: [createdByUserId], references: [id])
+  clients         Client[]         @relation(name: "CompanyToClient")
+  companyProducts CompanyProduct[] @relation(name: "CompanyToCompanyProduct")
+  discoverClients DiscoverClient[] @relation(name: "CompanyToDiscoverClient")
+  postBrands      PostBrand[]      @relation(name: "CompanyToPostBrand")
+  ambassadors     Ambassador[]     @relation(name: "CompanyToAmbassador")
+
+  @@map("companies")
+}
+
+model CompanyProduct {
+  id        Int      @id @default(autoincrement())
+  companyId Int
+  productId Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  company Company @relation(name: "CompanyToCompanyProduct", fields: [companyId], references: [id], onDelete: Cascade)
+  product Product @relation(name: "ProductToCompanyProduct", fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, productId], name: "CompanyProductIdentifier")
+  @@map("company_products")
+}
+
+model CampaignProduct {
+  id         Int      @id @default(autoincrement())
+  campaignId Int
+  productId  Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  campaign Campaign @relation(name: "CampaignToCampaignProduct", fields: [campaignId], references: [id], onDelete: Cascade)
+  product  Product  @relation(name: "ProductToCampaignProduct", fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([campaignId, productId], name: "CampaignProductIdentifier")
+  @@map("campaign_products")
+}
+
+model SurveyProduct {
+  id        Int      @id @default(autoincrement())
+  surveyId  Int
+  productId Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  survey  Survey  @relation(name: "SurveyToSurveyProduct", fields: [surveyId], references: [id], onDelete: Cascade)
+  product Product @relation(name: "ProductToSurveyProduct", fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([surveyId, productId], name: "SurveyProductIdentifier")
+  @@map("survey_products")
+}
+
+model Product {
+  id                Int      @id @default(autoincrement())
+  name              String
+  genericName       String   @default("")
+  createdByClientId Int?
+  isApproved        Boolean  @default(false)
+  isBranded         Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  createdByClient            Client?                 @relation(name: "ClientToProduct", fields: [createdByClientId], references: [id])
+  companyProducts            CompanyProduct[]        @relation(name: "ProductToCompanyProduct")
+  campaignProducts           CampaignProduct[]       @relation(name: "ProductToCampaignProduct")
+  surveyProducts             SurveyProduct[]         @relation(name: "ProductToSurveyProduct")
+  postProducts               PostProduct[]           @relation(name: "ProductToPostProduct")
+  clientsWithProduct         ClientProduct[]         @relation(name: "ClientProductToProduct")
+  discoverClientsWithProduct DiscoverClientProduct[] @relation(name: "ProductToDiscoverClientProduct")
+
+  @@unique([name, genericName])
+  @@map("products")
+}
+
+model Client {
+  id             Int      @id @default(autoincrement())
+  userId         Int      @unique
+  companyId      Int
+  companyTitleId Int
+  industryId     Int?
+  ambassadorId   Int?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user                 User                   @relation(name: "UserToClient", fields: [userId], references: [id], onDelete: Cascade)
+  company              Company                @relation(name: "CompanyToClient", fields: [companyId], references: [id])
+  companyTitle         CompanyTitle           @relation(name: "CompanyTitleToClient", fields: [companyTitleId], references: [id])
+  industry             Industry?              @relation(name: "IndustryToClient", fields: [industryId], references: [id])
+  ambassador           Ambassador?            @relation(name: "AmbassadorToClient", fields: [ambassadorId], references: [id])
+  clientDiseaseAreas   ClientDiseaseArea[]    @relation(name: "ClientToClientDiseaseArea")
+  clientMarkets        ClientMarket[]         @relation(name: "ClientToClientMarket")
+  products             Product[]              @relation(name: "ClientToProduct")
+  platformProductOrder PlatformProductOrder[] @relation(name: "ClientToPlatformProductOrder")
+  clientProducts       ClientProduct[]        @relation(name: "ClientProductToClient")
+
+  @@map("clients")
+}
+
+model ClientProduct {
+  id        Int      @id @default(autoincrement())
+  clientId  Int
+  productId Int
+  createdAt DateTime @default(now())
+
+  client  Client  @relation(name: "ClientProductToClient", fields: [clientId], references: [id])
+  product Product @relation(name: "ClientProductToProduct", fields: [productId], references: [id])
+
+  @@unique([clientId, productId], name: "ClientProductIdentifier")
+  @@map("client_products")
+}
+
+model Industry {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  clients         Client[]         @relation(name: "IndustryToClient")
+  discoverClients DiscoverClient[] @relation(name: "IndustryToDiscoverClient")
+  ambassadors     Ambassador[]     @relation(name: "IndustryToAmbassador")
+
+  @@map("industries")
+}
+
+model DiscoverClientMarket {
+  id               Int      @id @default(autoincrement())
+  discoverClientId Int
+  locationId       Int
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  discoverClient DiscoverClient @relation(name: "DiscoverClientToDiscoverClientMarket", fields: [discoverClientId], references: [id], onDelete: Cascade)
+  location       Location       @relation(name: "LocationToDiscoverClientMarket", fields: [locationId], references: [id], onDelete: Cascade)
+
+  @@unique([discoverClientId, locationId], name: "DiscoverClientLocationIdentifier")
+  @@map("discover_client_markets")
+}
+
+model DiscoverClientDiseaseArea {
+  id               Int      @id @default(autoincrement())
+  discoverClientId Int
+  diseaseAreaId    Int
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  discoverClient DiscoverClient @relation(name: "DiscoverClientToDiscoverClientDiseaseArea", fields: [discoverClientId], references: [id], onDelete: Cascade)
+  diseaseArea    DiseaseArea    @relation(name: "DiseaseAreaToDiscoverClientDiseaseArea", fields: [diseaseAreaId], references: [id], onDelete: Cascade)
+
+  @@unique([discoverClientId, diseaseAreaId], name: "DiscoverClientDiseaseAreaIdentifier")
+  @@map("discover_client_disease_areas")
+}
+
+model DiscoverClient {
+  id              Int       @id @default(autoincrement())
+  firstName       String?
+  lastName        String?
+  companyId       Int?
+  companyTitleId  Int?
+  industryId      Int?
+  email           String?
+  locationId      Int?
+  status          Int
+  invitationToken String?
+  contactedAt     DateTime?
+  isDeleted       Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  company                    Company?                    @relation(name: "CompanyToDiscoverClient", fields: [companyId], references: [id])
+  companyTitle               CompanyTitle?               @relation(name: "CompanyTitleToDiscoverClient", fields: [companyTitleId], references: [id])
+  industry                   Industry?                   @relation(name: "IndustryToDiscoverClient", fields: [industryId], references: [id])
+  location                   Location?                   @relation(name: "LocationToDiscoverClient", fields: [locationId], references: [id])
+  discoverClientMarkets      DiscoverClientMarket[]      @relation(name: "DiscoverClientToDiscoverClientMarket")
+  discoverClientDiseaseAreas DiscoverClientDiseaseArea[] @relation(name: "DiscoverClientToDiscoverClientDiseaseArea")
+  discoverClientProducts     DiscoverClientProduct[]     @relation(name: "ClientToDiscoverClientProduct")
+
+  @@map("discover_clients")
+}
+
+model DiscoverClientProduct {
+  id               Int      @id @default(autoincrement())
+  discoverClientId Int
+  productId        Int
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  discoverClient DiscoverClient @relation(name: "ClientToDiscoverClientProduct", fields: [discoverClientId], references: [id], onDelete: Cascade)
+  product        Product        @relation(name: "ProductToDiscoverClientProduct", fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([discoverClientId, productId], name: "DiscoverClientProductIdentifier")
+  @@map("discover_client_products")
+}
+
+model ClientDiseaseArea {
+  id            Int      @id @default(autoincrement())
+  clientId      Int
+  diseaseAreaId Int
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  client      Client      @relation(name: "ClientToClientDiseaseArea", fields: [clientId], references: [id], onDelete: Cascade)
+  diseaseArea DiseaseArea @relation(name: "DiseaseAreaToClientDiseaseArea", fields: [diseaseAreaId], references: [id], onDelete: Cascade)
+
+  @@unique([clientId, diseaseAreaId], name: "ClientDiseaseAreaIdentifier")
+  @@map("client_disease_areas")
+}
+
+model ClientMarket {
+  id         Int      @id @default(autoincrement())
+  clientId   Int
+  locationId Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  client   Client   @relation(name: "ClientToClientMarket", fields: [clientId], references: [id], onDelete: Cascade)
+  location Location @relation(name: "LocationToClientMarket", fields: [locationId], references: [id], onDelete: Cascade)
+
+  @@unique([clientId, locationId], name: "ClientMarketIdentifier")
+  @@map("client_markets")
+}
+
+model Stakeholder {
+  id                     Int      @id @default(autoincrement())
+  socialPlatformId       Int
+  socialPlatformUserId   String
+  socialPlatformUsername String
+  iv                     String?
+  bio                    String?
+  type                   Int?
+  isRegistered           Boolean  @default(false)
+  isSML                  Boolean  @default(false)
+  isQA                   Boolean  @default(false)
+  isPrivate              Boolean  @default(false)
+  followersCount         Int?
+  likesCount             Int?
+  commentsCount          Int?
+  postCount              Int?
+  influencerId           Int?
+  locationId             Int?
+  ethnicityId            Int?
+  gender                 Int?
+  age                    Int?
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  influencer                   Influencer?                   @relation(name: "InfluencerToStakeholder", fields: [influencerId], references: [id], onDelete: Cascade)
+  location                     Location?                     @relation(name: "LocationToStakeholder", fields: [locationId], references: [id])
+  ethnicity                    Ethnicity?                    @relation(name: "EthnicityToStakeholder", fields: [ethnicityId], references: [id])
+  stakeholderPosts             StakeholderPost[]             @relation(name: "StakeholderToStakeholderPost")
+  patientCaregiverDiseaseAreas PatientCaregiverDiseaseArea[] @relation(name: "StakeholderToPatientCaregiverDiseaseArea")
+  stakeholderInterests         StakeholderInterest[]         @relation(name: "StakeholderToStakeholderInterest")
+  influencerFollowers          InfluencerFollower[]          @relation(name: "InfluencerFollowerToStakeholder")
+  campaignLikers               CampaignInfluencerLiker[]     @relation(name: "StakeholderToCampaignInfluencerLiker")
+
+  socialPlatform SocialPlatform @relation(name: "SocialPlatformToStakeholder", fields: [socialPlatformId], references: [id], onDelete: Cascade)
+
+  @@unique([influencerId, socialPlatformUserId], name: "InfluencerStakeholderIdentifier")
+  @@map("stakeholders")
+}
+
+model StakeholderPost {
+  id                  Int      @id @default(autoincrement())
+  stakeholderId       Int
+  content             String?
+  language            String?
+  overallSentiment    Int?
+  comments            Int? // * count ONLY
+  likes               Int? // * count ONLY
+  isReported          Boolean?
+  reportComment       String?
+  preprocessedContent String?
+  isContentProcessed  Boolean  @default(false)
+  isDeleted           Boolean  @default(false)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  stakeholder      Stakeholder                 @relation(name: "StakeholderToStakeholderPost", fields: [stakeholderId], references: [id], onDelete: Cascade)
+  postDiseaseAreas PostDiseaseArea[]           @relation(name: "PostDiseaseAreaToStakeholderPost")
+  postBrands       PostBrand[]                 @relation(name: "StakeholderPostToPostBrand")
+  postProducts     PostProduct[]               @relation(name: "StakeholderPostToPostProduct")
+  postStruggles    PostStruggle[]              @relation(name: "StakeholderPostToPostStruggle")
+  postSymptom      PostSymptom[]               @relation(name: "StakeholderPostToPostSymptom")
+  tokenOccurences  PostContentTokenOccurence[] @relation(name: "StakeholderPostToPostContentTokenOccurence")
+  postInterests    PostInterest[]              @relation(name: "StakeholderPostToPostInterest")
+  postThemes       PostTheme[]                 @relation(name: "StakeholderPostToPostTheme")
+
+  @@map("stakeholder_posts")
+}
+
+model PostContentTokenOccurence {
+  id         Int      @id @default(autoincrement())
+  postId     Int
+  tokenId    Int
+  occurences Int      @default(1)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  post  StakeholderPost  @relation(name: "StakeholderPostToPostContentTokenOccurence", fields: [postId], references: [id], onDelete: Cascade)
+  token PostContentToken @relation(name: "PostContentTokenToPostContentTokenOccurence", fields: [tokenId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, tokenId], name: "PostTokenIdentifier")
+  @@map("post_content_token_occurences")
+}
+
+model PostContentToken {
+  id         Int      @id @default(autoincrement())
+  token      String   @unique
+  tokenType  Int
+  occurences Int      @default(1)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  tokenOccurences PostContentTokenOccurence[] @relation(name: "PostContentTokenToPostContentTokenOccurence")
+
+  @@map("post_content_tokens")
+}
+
+model PostSymptom {
+  id                Int  @id @default(autoincrement())
+  stakeholderPostId Int
+  symptomId         Int
+  symptomSentiment  Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  stakeholderPost StakeholderPost @relation(name: "StakeholderPostToPostSymptom", references: [id], fields: [stakeholderPostId], onDelete: Cascade)
+  symptom         Symptom         @relation(name: "SymptomToPostSymptom", fields: [symptomId], references: [id], onDelete: Cascade)
+
+  @@map("post_symptoms")
+}
+
+model PostDiseaseArea {
+  id                Int      @id @default(autoincrement())
+  stakeholderPostId Int
+  diseaseAreaId     Int
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  diseaseArea     DiseaseArea     @relation(name: "DiseaseAreaToPostDiseaseArea", fields: [diseaseAreaId], references: [id], onDelete: Cascade)
+  stakeholderPost StakeholderPost @relation(name: "PostDiseaseAreaToStakeholderPost", fields: [stakeholderPostId], references: [id], onDelete: Cascade)
+
+  @@map("post_disease_areas")
+}
+
+model PostBrand {
+  id                Int      @id @default(autoincrement())
+  stakeholderPostId Int
+  brandId           Int
+  brandSentiment    Int?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  stakeholderPost StakeholderPost @relation(name: "StakeholderPostToPostBrand", fields: [stakeholderPostId], references: [id], onDelete: Cascade)
+  company         Company         @relation(name: "CompanyToPostBrand", fields: [brandId], references: [id], onDelete: Cascade)
+
+  @@map("post_brands")
+}
+
+model PostProduct {
+  id                Int      @id @default(autoincrement())
+  stakeholderPostId Int
+  productId         Int
+  productSentiment  Int?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  stakeholderPost StakeholderPost @relation(name: "StakeholderPostToPostProduct", fields: [stakeholderPostId], references: [id], onDelete: Cascade)
+  product         Product         @relation(name: "ProductToPostProduct", fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("post_products")
+}
+
+model PostStruggle {
+  id                Int      @id @default(autoincrement())
+  stakeholderPostId Int
+  struggleId        Int
+  struggleSentiment Int?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  stakeholderPost StakeholderPost @relation(name: "StakeholderPostToPostStruggle", fields: [stakeholderPostId], references: [id], onDelete: Cascade)
+  struggle        Struggle        @relation(name: "StruggleToPostStruggle", fields: [struggleId], references: [id], onDelete: Cascade)
+
+  @@map("post_struggles")
+}
+
+model PostInterest {
+  id                Int      @id @default(autoincrement())
+  stakeholderPostId Int
+  interestId        Int
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  interest        Interest        @relation(name: "InterestToPostInterest", references: [id], fields: [interestId], onDelete: Cascade)
+  stakeholderPost StakeholderPost @relation(name: "StakeholderPostToPostInterest", references: [id], fields: [stakeholderPostId], onDelete: Cascade)
+
+  @@map("post_interests")
+}
+
+model PostTheme {
+  id                Int      @id @default(autoincrement())
+  stakeholderPostId Int
+  themeId           Int
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  theme           Theme           @relation(name: "ThemeToPostTheme", references: [id], fields: [themeId], onDelete: Cascade)
+  stakeholderPost StakeholderPost @relation(name: "StakeholderPostToPostTheme", references: [id], fields: [stakeholderPostId], onDelete: Cascade)
+
+  @@map("post_themes")
+}
+
+model Theme {
+  id         Int      @id @default(autoincrement())
+  name       String   @unique
+  identifier String?  @unique
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  postThemes PostTheme[] @relation(name: "ThemeToPostTheme")
+
+  @@map("themes")
+}
+
+model PatientCaregiverDiseaseArea {
+  id            Int      @id @default(autoincrement())
+  stakeholderId Int
+  diseaseAreaId Int
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  stakeholder Stakeholder @relation(name: "StakeholderToPatientCaregiverDiseaseArea", fields: [stakeholderId], references: [id], onDelete: Cascade)
+  diseaseArea DiseaseArea @relation(name: "DiseaseAreaToPatientCaregiverDiseaseArea", fields: [diseaseAreaId], references: [id], onDelete: Cascade)
+
+  @@map("patient_caregiver_disease_areas")
+}
+
+model StakeholderInterest {
+  id            Int      @id @default(autoincrement())
+  interestId    Int
+  stakeholderId Int
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  interest    Interest    @relation(name: "InterestToStakeholderInterest", fields: [interestId], references: [id], onDelete: Cascade)
+  stakeholder Stakeholder @relation(name: "StakeholderToStakeholderInterest", fields: [stakeholderId], references: [id], onDelete: Cascade)
+
+  @@map("stakeholder_interests")
+}
+
+model Interest {
+  id         Int      @id @default(autoincrement())
+  identifier String?  @unique
+  name       String   @unique
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  stakeholderInterests          StakeholderInterest[]          @relation(name: "InterestToStakeholderInterest")
+  platformProductOrderInterests PlatformProductOrderInterest[] @relation(name: "InterestToPlatformProductOrderInterest")
+  postInterests                 PostInterest[]                 @relation(name: "InterestToPostInterest")
+
+  @@map("interests")
+}
+
+model Ethnicity {
+  id         Int      @id @default(autoincrement())
+  name       String   @unique
+  identifier String?  @unique
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  stakeholders                    Stakeholder[]                   @relation(name: "EthnicityToStakeholder")
+  influencers                     Influencer[]                    @relation(name: "EthnicityToInfluencer")
+  platformProductOrderEthnicities PlatformProductOrderEthnicity[] @relation(name: "InterestToPlatformProductOrderEthnicity")
+
+  @@map("ethnicities")
+}
+
+model Struggle {
+  id         Int      @id @default(autoincrement())
+  name       String   @unique
+  identifier String?  @unique
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  postStruggles                 PostStruggle[]                 @relation(name: "StruggleToPostStruggle")
+  platformProductOrderStruggles PlatformProductOrderStruggle[] @relation(name: "InterestToPlatformProductOrderStruggle")
+
+  @@map("struggles")
+}
+
+model Symptom {
+  id         Int      @id @default(autoincrement())
+  name       String   @unique
+  identifier String?  @unique
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  postSymptoms                 PostSymptom[]                 @relation(name: "SymptomToPostSymptom")
+  platformProductOrderSymptoms PlatformProductOrderSymptom[] @relation(name: "SymptomToPlatformProductOrderSymptom")
+
+  @@map("symptoms")
+}
+
+model Campaign {
+  id                        Int       @id @default(autoincrement())
+  name                      String
+  platformProductOrderId    Int
+  dateStart                 DateTime?
+  dateEnd                   DateTime?
+  description               String?
+  influencersCount          Int?
+  ageMin                    Int?
+  ageMax                    Int?
+  targetAudienceDescription String?
+  socialPlatformId          Int?
+  postType                  Int?
+  clientCompanyWebsite      String?
+  instructions              String?
+  contract                  String?
+  isContractApproved        Boolean   @default(false)
+  report                    Int?
+  createdAt                 DateTime  @default(now())
+  updatedAt                 DateTime  @updatedAt
+
+  // Product                  Product?                  @relation(name: "ProductToCampaign", fields: [productId], references: [id])
+  platformProductOrder           PlatformProductOrder            @relation(name: "ProductOrderToCampaign", fields: [platformProductOrderId], references: [id], onDelete: Cascade)
+  campaignReport                 CampaignReport?                 @relation(name: "CampaignToCampaignReport")
+  campaignInfluencersSizes       CampaignInfluencersSize[]       @relation(name: "CampaignToCampaignInfluencersSize")
+  campaignInfluencerPerformances CampaignInfluencerPerformance[] @relation(name: "CampaignToCampaignInfluencerPerformance")
+  exampleImages                  CampaignExampleImage[]          @relation(name: "CampaignToCampaignExampleImage")
+  stakeholderTypes               CampaignStakeholderType[]       @relation(name: "CampaignToCampaignStakeholderType")
+  notificationPayload            NotificationPayload[]           @relation(name: "CampaignToNotificationPayload")
+  products                       CampaignProduct[]               @relation(name: "CampaignToCampaignProduct")
+
+  @@map("campaigns")
+}
+
+model CampaignExampleImage {
+  id         Int      @id @default(autoincrement())
+  campaignId Int
+  imageUrl   String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  campaign Campaign @relation(name: "CampaignToCampaignExampleImage", fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@unique([campaignId, imageUrl], name: "CampaignExampleImageIdentifier")
+  @@map("campaign_example_images")
+}
+
+model CampaignStakeholderType {
+  id              Int      @id @default(autoincrement())
+  campaignId      Int
+  stakeholderType Int
+  createdAt       DateTime @default(now())
+
+  campaign Campaign @relation(name: "CampaignToCampaignStakeholderType", fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@unique([campaignId, stakeholderType], name: "CampaignStakeholderTypeIdentifier")
+  @@map("campaign_stakeholder_types")
+}
+
+model CampaignInfluencersSize {
+  id               Int      @id @default(autoincrement())
+  campaignId       Int
+  influencerSizeId Int
+  createdAt        DateTime @default(now())
+
+  campaign       Campaign        @relation(name: "CampaignToCampaignInfluencersSize", fields: [campaignId], references: [id], onDelete: Cascade)
+  influencerSize InfluencersSize @relation(name: "InfluencerSizeToCampaignInfluencersSize", fields: [influencerSizeId], references: [id], onDelete: Cascade)
+
+  @@unique([campaignId, influencerSizeId], name: "CampaignInfluencersSizeIdentifier")
+  @@map("campaign_influencers_sizes")
+}
+
+model InfluencersSize {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  from      Int
+  to        Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  campaginInfluencersSizes CampaignInfluencersSize[] @relation(name: "InfluencerSizeToCampaignInfluencersSize")
+
+  @@map("influencers_sizes")
+}
+
+model CampaignReport {
+  id                     Int      @id @default(autoincrement())
+  platformProductOrderId Int
+  campaignId             Int      @unique
+  reportType             Int?
+  status                 Int
+  // budget            Decimal?
+  description            String?
+  reach                  Boolean? // 3?
+  numOfLikes             Boolean? // 2?
+  numOfComments          Boolean? // 1?
+  websiteClicks          Boolean? // 1
+  engagement             Boolean? // 4
+  // comments      Boolean?
+  costPerTarget          Boolean? // 3
+  costPerClick           Boolean? // 2
+  costPerLike            Boolean? // 5
+  costPerComment         Boolean? // 6
+  costPerEngagement      Boolean? // 7
+  overlap                Boolean? // 8
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  platformProductOrder      PlatformProductOrder  @relation(name: "ProductOrderToCampaignReport", fields: [platformProductOrderId], references: [id], onDelete: Cascade)
+  campaign                  Campaign              @relation(name: "CampaignToCampaignReport", fields: [campaignId], references: [id], onDelete: Cascade)
+  notificationPayloadClient NotificationPayload[] @relation(name: "CampaignReportToNotificationPayload")
+
+  @@unique([id, status])
+  @@map("campaign_reports")
+}
+
+model CampaignInfluencerPerformance {
+  id             Int       @id @default(autoincrement())
+  campaignId     Int
+  influencerId   Int
+  submissionLink String
+  trackingCode   String?   @unique
+  postTimestamp  DateTime?
+  comments       Int?
+  likes          Int?
+  costPerTarget  Decimal?
+  costPerClick   Decimal?
+  reach          Decimal?
+  engagement     Decimal?
+  websiteClick   Int?
+  overlap        Decimal?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  campaign   Campaign                  @relation(name: "CampaignToCampaignInfluencerPerformance", fields: [campaignId], references: [id], onDelete: Cascade)
+  influencer Influencer                @relation(name: "InfluencerToCampaignInfluencerPerformance", fields: [influencerId], references: [id], onDelete: Cascade)
+  likers     CampaignInfluencerLiker[] @relation(name: "CampaignInfluencerPerformanceToCampaignInfluencerLiker")
+
+  @@unique([campaignId, influencerId], name: "CampaignInfluencerPerformanceIdentifier")
+  @@map("campaign_influencer_performances")
+}
+
+model CampaignInfluencerLiker {
+  id                              Int      @id @default(autoincrement())
+  campaignInfluencerPerformanceId Int
+  stakeholderId                   Int
+  createdAt                       DateTime @default(now())
+  updatedAt                       DateTime @updatedAt
+
+  campaignInfluencerPerformance CampaignInfluencerPerformance @relation(name: "CampaignInfluencerPerformanceToCampaignInfluencerLiker", fields: [campaignInfluencerPerformanceId], references: [id])
+  stakeholder                   Stakeholder                   @relation(name: "StakeholderToCampaignInfluencerLiker", fields: [stakeholderId], references: [id])
+
+  @@unique([campaignInfluencerPerformanceId, stakeholderId], name: "CampaignInfluencerLikerIdentifier")
+  @@map("campaign_influencer_likers")
+}
+
+model Ambassador {
+  id               Int      @id @default(autoincrement())
+  userId           Int      @unique
+  companyId        Int
+  companyTitleId   Int
+  affiliateCode    String
+  invitedByAdminId Int
+  industryId       Int?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  user           User         @relation(name: "UserToAmbassador", fields: [userId], references: [id], onDelete: Cascade)
+  invitedByAdmin Admin        @relation(name: "AdminToAmbassador", fields: [invitedByAdminId], references: [id])
+  company        Company      @relation(name: "CompanyToAmbassador", fields: [companyId], references: [id])
+  companyTitle   CompanyTitle @relation(name: "CompanyTitleToAmbassador", fields: [companyTitleId], references: [id])
+  industry       Industry?    @relation(name: "IndustryToAmbassador", fields: [industryId], references: [id])
+  clients        Client[]     @relation(name: "AmbassadorToClient")
+
+  @@map("ambassadors")
+}
+
+model SocialMediaListening {
+  id                     Int       @id @default(autoincrement())
+  platformProductOrderId Int
+  subscriptionLength     Int?
+  monthlyTokens          Int?
+  smlDescription         String?
+  startedAt              DateTime?
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+
+  clientSMLTokenBalances ClientSMLTokenBalance[] @relation(name: "SocialMediaListeningToClientSMLTokenBalance")
+  SMLPlatforms           SMLPlatform[]           @relation(name: "SocialMediaListeningToSMLPlatform")
+
+  platformProductOrder PlatformProductOrder  @relation(name: "PlatformProductOrderToSocialMediaListening", fields: [platformProductOrderId], references: [id], onDelete: Cascade)
+  notificationPayload  NotificationPayload[] @relation(name: "SocialMediaListeningToNotificationPayload")
+
+  @@map("social_media_listenings")
+}
+
+model ClientSMLTokenBalance {
+  id            Int      @id @default(autoincrement())
+  smlId         Int
+  /// represents productOrderChatMessageId
+  chatMessageId Int?
+  tokenBalance  Int
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  chatMessage PlatformProductOrderChatMessage? @relation(name: "ChatMessageToClientSMLTokenBalance", fields: [chatMessageId], references: [id])
+  sml         SocialMediaListening             @relation(name: "SocialMediaListeningToClientSMLTokenBalance", fields: [smlId], references: [id])
+
+  @@map("client_sml_token_balances")
+}
+
+model SMLPlatform {
+  id               Int      @id @default(autoincrement())
+  smlId            Int
+  socialPlatformId Int
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  sml            SocialMediaListening @relation(name: "SocialMediaListeningToSMLPlatform", fields: [smlId], references: [id], onDelete: Cascade)
+  socialPlatform SocialPlatform       @relation(name: "SocialPlatformToSMLPlatform", fields: [socialPlatformId], references: [id])
+
+  @@unique([smlId, socialPlatformId], name: "SMLPlatformIdentifier")
+  @@map("sml_platforms")
+}
+
+model SocialPlatform {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  SMLPlatforms SMLPlatform[] @relation(name: "SocialPlatformToSMLPlatform")
+  stakeholders Stakeholder[] @relation(name: "SocialPlatformToStakeholder")
+
+  @@map("social_platforms")
+}
+
+model Survey {
+  id                      Int       @id @default(autoincrement())
+  name                    String
+  platformProductOrderId  Int
+  dateStart               DateTime?
+  dateEnd                 DateTime?
+  language                Int?
+  surveyDescription       String?
+  participantCount        Int?
+  questionCount           Int?
+  ageMin                  Int?
+  ageMax                  Int?
+  // gender                  Int?
+  participantsDescription String?
+  surveyType              Int?
+  fileUploadUrl           String?
+  instructionsDescription String?
+  // question credits come with "tokens" package?
+  questionCredits         Int?
+  link                    String?
+  contract                String?
+  isContractApproved      Boolean   @default(false)
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
+
+  platformProductOrder      PlatformProductOrder       @relation(name: "ProductOrderToSurvey", fields: [platformProductOrderId], references: [id], onDelete: Cascade)
+  clientSurveyTokenBalances ClientSurveyTokenBalance[] @relation(name: "SurveyToClientSurveyTokenBalance")
+  surveyQuestions           SurveyQuestion[]           @relation(name: "SurveyToSurveyQuestion")
+  surveyResponses           SurveyResponse[]           @relation(name: "SurveyToSurveyResponse")
+  notificationPayload       NotificationPayload[]      @relation(name: "SurveyToNotificationPayload")
+  exampleImages             SurveyExampleImage[]       @relation(name: "SurveyToSurveyExampleImage")
+  products                  SurveyProduct[]            @relation(name: "SurveyToSurveyProduct")
+  stakeholderTypes          SurveyStakeholderType[]    @relation(name: "SurveyToSurveyStakeholderType")
+
+  @@map("surveys")
+}
+
+model SurveyStakeholderType {
+  id              Int      @id @default(autoincrement())
+  surveyId        Int
+  stakeholderType Int
+  createdAt       DateTime @default(now())
+
+  survey Survey @relation(name: "SurveyToSurveyStakeholderType", fields: [surveyId], references: [id], onDelete: Cascade)
+
+  @@unique([surveyId, stakeholderType], name: "SurveyStakeholderTypeIdentifier")
+  @@map("survey_stakeholder_types")
+}
+
+model SurveyExampleImage {
+  id        Int      @id @default(autoincrement())
+  surveyId  Int
+  imageUrl  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  survey Survey @relation(name: "SurveyToSurveyExampleImage", fields: [surveyId], references: [id], onDelete: Cascade)
+
+  @@unique([surveyId, imageUrl], name: "SurveyExampleImageIdentifier")
+  @@map("survey_example_images")
+}
+
+model ClientSurveyTokenBalance {
+  id            Int      @id @default(autoincrement())
+  surveyId      Int
+  chatMessageId Int?
+  tokenBalance  Decimal
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  survey      Survey                           @relation(name: "SurveyToClientSurveyTokenBalance", fields: [surveyId], references: [id], onDelete: Cascade)
+  chatMessage PlatformProductOrderChatMessage? @relation(name: "ChatMessageToClientSurveyTokenBalance", fields: [chatMessageId], references: [id])
+
+  @@map("client_survey_token_balances")
+}
+
+model SurveyQuestion {
+  id             Int      @id @default(autoincrement())
+  surveyId       Int
+  questionText   String?
+  questionType   Int
+  order          Int?
+  questionCredit Int?
+  isOptional     Boolean? @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  survey          Survey           @relation(name: "SurveyToSurveyQuestion", fields: [surveyId], references: [id], onDelete: Cascade)
+  surveyOptions   SurveyOption[]   @relation(name: "SurveyQuestionToSurveyOption")
+  surveyResponses SurveyResponse[] @relation(name: "SurveyQuestionToSurveyResponse")
+
+  @@map("survey_questions")
+}
+
+model SurveyResponse {
+  id                 Int      @id @default(autoincrement())
+  surveyId           Int
+  userId             Int
+  surveyQuestionId   Int
+  surveyOptionId     Int?
+  surveyResponseText String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  survey         Survey         @relation(name: "SurveyToSurveyResponse", fields: [surveyId], references: [id], onDelete: Cascade)
+  user           User           @relation(name: "UserToSurveyResponse", fields: [userId], references: [id], onDelete: Cascade)
+  surveyOption   SurveyOption?  @relation(name: "SurveyOptionToSurveyResponse", fields: [surveyOptionId], references: [id], onDelete: Cascade)
+  surveyQuestion SurveyQuestion @relation(name: "SurveyQuestionToSurveyResponse", fields: [surveyQuestionId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, surveyQuestionId, surveyOptionId], name: "UserSurveyQuestionResponseIdentifier")
+  @@map("survey_responses")
+}
+
+model SurveyOption {
+  id               Int      @id @default(autoincrement())
+  surveyQuestionId Int
+  optionText       String?
+  order            Int?
+  isOther          Boolean? @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  surveyQuestion  SurveyQuestion   @relation(name: "SurveyQuestionToSurveyOption", fields: [surveyQuestionId], references: [id], onDelete: Cascade)
+  surveyResponses SurveyResponse[] @relation(name: "SurveyOptionToSurveyResponse")
+
+  @@map("survey_options")
+}
+
+model Benefit {
+  id                   Int      @id @default(autoincrement())
+  benefitPartnershipId Int?
+  benefitCompanyLink   String?
+  description          String?
+  benefitCategoryId    Int?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  benefitPartnership BenefitPartnership? @relation(name: "BenefitPartnershipToBenefit", fields: [benefitPartnershipId], references: [id])
+  benefitCategory    BenefitCategory?    @relation(name: "BenefitCategoryToBenefit", fields: [benefitCategoryId], references: [id])
+  benefitLocations   BenefitLocation[]   @relation(name: "BenefitLocationToBenefit")
+
+  @@map("benefits")
+}
+
+model BenefitSuggestion {
+  id                  Int      @id @default(autoincrement())
+  authorId            Int
+  partnershipName     String
+  partnershipLink     String?
+  argumentDescription String
+  outcomeDescription  String
+  statusDescription   String?
+  isApproved          Boolean  @default(false)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  author              User                 @relation(name: "AuthorToBenefitSuggestion", fields: [authorId], references: [id], onDelete: Cascade)
+  benefitUpvoteCounts BenefitUpvoteCount[] @relation(name: "BenefitSuggestionToBenefitUpvoteCount")
+
+  @@map("benefit_suggestions")
+}
+
+model BenefitLocation {
+  id         Int      @id @default(autoincrement())
+  benefitId  Int
+  locationId Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  location Location @relation(name: "LocationToBenefitLocation", fields: [locationId], references: [id], onDelete: Cascade)
+  benefit  Benefit  @relation(name: "BenefitLocationToBenefit", fields: [benefitId], references: [id], onDelete: Cascade)
+
+  @@unique([benefitId, locationId], name: "BenefitLocationIdentifier")
+  @@map("benefit_locations")
+}
+
+model BenefitUpvoteCount {
+  id                  Int      @id @default(autoincrement())
+  benefitSuggestionId Int
+  userId              Int
+  isUpvoted           Boolean?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  benefitSuggestion BenefitSuggestion @relation(name: "BenefitSuggestionToBenefitUpvoteCount", fields: [benefitSuggestionId], references: [id], onDelete: Cascade)
+  user              User              @relation(name: "UserToBenefitUpvoteCount", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([benefitSuggestionId, userId], name: "BenefitUpvoteCountIdentifier")
+  @@map("benefit_upvote_counts")
+}
+
+model BenefitPartnership {
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  benefits Benefit[] @relation(name: "BenefitPartnershipToBenefit")
+
+  @@map("benefit_partnerships")
+}
+
+model BenefitCategory {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  benefits Benefit[] @relation(name: "BenefitCategoryToBenefit")
+
+  @@map("benefit_categories")
+}
+
+// model Transaction {
+//   id                 Int      @id @default(autoincrement())
+//   status             Int
+//   statementId        Int
+//   amount             Decimal
+//   availableAmounts   Decimal
+//   unavailableAmounts Decimal
+//   createdAt          DateTime @default(now())
+//   updatedAt          DateTime @updatedAt
+
+//   statement FinanceStatement @relation(name: "UserStatementToTransaction", fields: [statementId], references: [id])
+
+//   @@map("transactions")
+// }
+
+model Transaction {
+  id                 Int      @id @default(autoincrement())
+  transactionFlowId  Int
+  status             Int
+  availableAmounts   Decimal
+  unavailableAmounts Decimal
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  transactionFlow               TransactionFlow                @relation(name: "TransactionToTransactionFlow", fields: [transactionFlowId], references: [id], onDelete: Cascade)
+  notificationPayload           NotificationPayload[]          @relation(name: "TransactionToNotificationPayload")
+  influencerAmbassadorWithdraws InfluencerAmbassadorWithdraw[] @relation(name: "TransactionToInfluencerAmbassadorWithdraw")
+
+  @@map("transactions")
+}
+
+model TransactionFlow {
+  id             Int      @id @default(autoincrement())
+  name           String?
+  userId         Int
+  type           Int
+  productOrderId Int?
+  amount         Decimal
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user                    User                     @relation(name: "UserToTransactionFlow", fields: [userId], references: [id], onDelete: Cascade)
+  productOrder            PlatformProductOrder?    @relation(name: "ProductOrderToTransactionFlow", fields: [productOrderId], references: [id])
+  transactions            Transaction[]            @relation(name: "TransactionToTransactionFlow")
+  notificationPayload     NotificationPayload[]    @relation(name: "TransactionFlowToNotificationPayload")
+  customFinanceStatements CustomFinanceStatement[] @relation(name: "TransactionFlowToCustomFinanceStatement")
+
+  @@map("transaction_flows")
+}
+
+// model FinanceStatement {
+//   id                Int      @id @default(autoincrement())
+//   userId            Int
+//   productOrderId    Int
+//   transactionFlowId Int      @unique
+//   createdAt         DateTime @default(now())
+//   updatedAt         DateTime @updatedAt
+
+//   transactionFlow TransactionFlow @relation(name: "FinanceStatementToTransactionFlow", fields: [transactionFlowId], references: [id])
+// influencerAmbassadorWithdraws InfluencerAmbassadorWithdraw[] @relation(name: "UserStatementToInfluencerAmbassadorWithdraw")
+
+//   @@map("influencer_ambassador_statements")
+// }
+
+// model InfluencerAmbassadorStatement {
+//   id             Int      @id @default(autoincrement())
+//   userId         Int
+//   productOrderId Int
+//   type           Int
+//   createdAt      DateTime @default(now())
+//   updatedAt      DateTime @updatedAt
+
+//   user                          User                           @relation(name: "UserToFinanceStatement", fields: [userId], references: [id])
+//   influencerAmbassadorWithdraws InfluencerAmbassadorWithdraw[] @relation(name: "UserStatementToInfluencerAmbassadorWithdraw")
+//   statementTransactions         StatementTransaction[]         @relation(name: "UserStatementToStatementTransaction")
+
+//   @@map("influencer_ambassador_statements")
+// }
+
+model InfluencerAmbassadorWithdraw {
+  id                   Int      @id @default(autoincrement())
+  // userStatementId      Int
+  transactionId        Int
+  bankAccountFirstName String
+  bankAccountLastName  String
+  bankName             String
+  bankAddress          String
+  iban                 String?
+  swiftBic             String?
+  accountNumber        String?
+  // status               Int
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  // userStatement FinanceStatement @relation(name: "UserStatementToInfluencerAmbassadorWithdraw", fields: [userStatementId], references: [id])
+  transaction Transaction @relation(name: "TransactionToInfluencerAmbassadorWithdraw", fields: [transactionId], references: [id], onDelete: Cascade)
+
+  @@map("influencer_ambassador_withdrawals")
+}
+
+model CustomFinanceStatement {
+  id                Int      @id @default(autoincrement())
+  userId            Int
+  productOrderId    Int
+  statementName     String
+  amount            Decimal
+  vendor            String?
+  statementDate     DateTime
+  transactionFlowId Int?
+  email             String
+  isBalanceChange   Boolean?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  type              Int
+
+  user                 User                 @relation(name: "UserToCustomFinanceStatement", fields: [userId], references: [id])
+  platformProductOrder PlatformProductOrder @relation(name: "ProductOrderToCustomFinanceStatement", fields: [productOrderId], references: [id])
+  transactionFlow      TransactionFlow?     @relation(name: "TransactionFlowToCustomFinanceStatement", fields: [transactionFlowId], references: [id])
+
+  @@map("custom_statements")
+}
+
+model PlatformProductOrderLabel {
+  id                     Int      @id @default(autoincrement())
+  labelId                Int
+  assignerId             Int
+  platformProductOrderId Int
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  label                Label                @relation(name: "LabelToPlatformProductOrderLabel", fields: [labelId], references: [id], onDelete: Cascade)
+  assigner             User                 @relation(name: "UserToPlatformProductOrderLabel", fields: [assignerId], references: [id], onDelete: Cascade)
+  platformProductOrder PlatformProductOrder @relation(name: "PlatformProductOrderToPlatformProductOrderLabel", fields: [platformProductOrderId], references: [id], onDelete: Cascade)
+
+  @@map("platform_product_order_labels")
+}
+
+model PlatformProductOrder {
+  id                   Int      @id @default(autoincrement())
+  clientId             Int
+  platformProduct      Int
+  ambassadorCommission Decimal?
+  budget               Decimal?
+  currencyId           Int?
+  status               Int
+  financeStatus        Int?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  client                           Client                                @relation(name: "ClientToPlatformProductOrder", fields: [clientId], references: [id])
+  currency                         Currency?                             @relation(name: "ProductOrderToCurrency", fields: [currencyId], references: [id])
+  platformProductOrderGenders      PlatformProductOrderGender[]          @relation(name: "ProductOrderToPlatformProductOrderGender")
+  platformProductOrderLanguages    PlatformProductOrderLanguage[]        @relation(name: "ProductOrderToPlatformProductOrderLanguage")
+  platformProductOrderLocations    PlatformProductOrderLocation[]        @relation(name: "ProductOrderToPlatformProductOrderLocation")
+  platformProductOrderDiseaseAreas PlatformProductOrderDiseaseArea[]     @relation(name: "ProductOrderToPlatformProductOrderDiseaseArea")
+  platformProductOrderInterests    PlatformProductOrderInterest[]        @relation(name: "ProductOrderToPlatformProductOrderInterest")
+  platformProductOrderEthnicities  PlatformProductOrderEthnicity[]       @relation(name: "ProductOrderToPlatformProductOrderEthnicity")
+  platformProductOrderStruggles    PlatformProductOrderStruggle[]        @relation(name: "ProductOrderToPlatformProductOrderStruggle")
+  platformProductOrderSymptoms     PlatformProductOrderSymptom[]         @relation(name: "ProductOrderToPlatformProductOrderSymptom")
+  platformProductOrderChatRooms    PlatformProductOrderChatRoom[]        @relation(name: "ProductOrderToPlatformProductOrderChatRoom")
+  platformProductOrderComments     PlatformProductOrderComment[]         @relation(name: "ProductOrderToPlatformProductOrderComment")
+  platformProductOrderInfluencers  PlatformProductOrderInfluencer[]      @relation(name: "ProductOrderToPlatformProductOrderInfluencer")
+  socialMediaListenings            SocialMediaListening[]                @relation(name: "PlatformProductOrderToSocialMediaListening")
+  platformProductOrderLabels       PlatformProductOrderLabel[]           @relation(name: "PlatformProductOrderToPlatformProductOrderLabel")
+  campaigns                        Campaign[]                            @relation(name: "ProductOrderToCampaign")
+  surveys                          Survey[]                              @relation(name: "ProductOrderToSurvey")
+  campaignReports                  CampaignReport[]                      @relation(name: "ProductOrderToCampaignReport")
+  notificationPayload              NotificationPayload[]                 @relation(name: "PlatformProductOrderToNotificationPayload")
+  transactionFlows                 TransactionFlow[]                     @relation(name: "ProductOrderToTransactionFlow")
+  statusChangelog                  PlatformProductOrderStatusChangelog[] @relation(name: "PlatformProductOrderToPlatformProductOrderStatusChangelog")
+  customFinanceStatements          CustomFinanceStatement[]              @relation(name: "ProductOrderToCustomFinanceStatement")
+
+  @@map("platform_product_orders")
+}
+
+model PlatformProductOrderStatusChangelog {
+  id                     Int      @id @default(autoincrement())
+  platformProductOrderId Int
+  status                 Int
+  createdAt              DateTime @default(now())
+
+  platformProductOrder PlatformProductOrder @relation(name: "PlatformProductOrderToPlatformProductOrderStatusChangelog", fields: [platformProductOrderId], references: [id])
+
+  @@map("platform_product_order_status_changelog")
+}
+
+model PlatformProductOrderGender {
+  id             Int      @id @default(autoincrement())
+  productOrderId Int
+  gender         Int
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  productOrder PlatformProductOrder @relation(name: "ProductOrderToPlatformProductOrderGender", fields: [productOrderId], references: [id], onDelete: Cascade)
+
+  @@unique([productOrderId, gender])
+  @@map("platform_product_order_genders")
+}
+
+model PlatformProductOrderLanguage {
+  id             Int      @id @default(autoincrement())
+  productOrderId Int
+  language       Int
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  productOrder PlatformProductOrder @relation(name: "ProductOrderToPlatformProductOrderLanguage", fields: [productOrderId], references: [id], onDelete: Cascade)
+
+  @@unique([productOrderId, language])
+  @@map("platform_product_order_languages")
+}
+
+model PlatformProductOrderLocation {
+  id             Int      @id @default(autoincrement())
+  productOrderId Int
+  locationId     Int
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  productOrder PlatformProductOrder @relation(name: "ProductOrderToPlatformProductOrderLocation", fields: [productOrderId], references: [id], onDelete: Cascade)
+  location     Location             @relation(name: "LocationToPlatformProductOrderLocation", fields: [locationId], references: [id], onDelete: Cascade)
+
+  @@unique([productOrderId, locationId])
+  @@map("platform_product_order_locations")
+}
+
+model PlatformProductOrderDiseaseArea {
+  id             Int      @id @default(autoincrement())
+  productOrderId Int
+  diseaseAreaId  Int
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  productOrder PlatformProductOrder @relation(name: "ProductOrderToPlatformProductOrderDiseaseArea", fields: [productOrderId], references: [id], onDelete: Cascade)
+  diseaseArea  DiseaseArea          @relation(name: "DiseaseAreaToPlatformProductOrderDiseaseArea", fields: [diseaseAreaId], references: [id], onDelete: Cascade)
+
+  @@unique([productOrderId, diseaseAreaId])
+  @@map("platform_product_order_disease_areas")
+}
+
+model PlatformProductOrderInterest {
+  id             Int      @id @default(autoincrement())
+  productOrderId Int
+  interestId     Int
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  productOrder PlatformProductOrder @relation(name: "ProductOrderToPlatformProductOrderInterest", fields: [productOrderId], references: [id], onDelete: Cascade)
+  interest     Interest             @relation(name: "InterestToPlatformProductOrderInterest", fields: [interestId], references: [id], onDelete: Cascade)
+
+  @@unique([productOrderId, interestId])
+  @@map("platform_product_order_interests")
+}
+
+model PlatformProductOrderEthnicity {
+  id             Int      @id @default(autoincrement())
+  productOrderId Int
+  ethnicityId    Int
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  productOrder PlatformProductOrder @relation(name: "ProductOrderToPlatformProductOrderEthnicity", fields: [productOrderId], references: [id], onDelete: Cascade)
+  ethnicity    Ethnicity            @relation(name: "InterestToPlatformProductOrderEthnicity", fields: [ethnicityId], references: [id], onDelete: Cascade)
+
+  @@unique([productOrderId, ethnicityId])
+  @@map("platform_product_order_ethnicities")
+}
+
+model PlatformProductOrderStruggle {
+  id             Int      @id @default(autoincrement())
+  productOrderId Int
+  struggleId     Int
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  productOrder PlatformProductOrder @relation(name: "ProductOrderToPlatformProductOrderStruggle", fields: [productOrderId], references: [id], onDelete: Cascade)
+  struggle     Struggle             @relation(name: "InterestToPlatformProductOrderStruggle", fields: [struggleId], references: [id], onDelete: Cascade)
+
+  @@unique([productOrderId, struggleId])
+  @@map("platform_product_order_struggles")
+}
+
+model PlatformProductOrderSymptom {
+  id             Int      @id @default(autoincrement())
+  productOrderId Int
+  symptomId      Int
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  productOrder PlatformProductOrder @relation(name: "ProductOrderToPlatformProductOrderSymptom", fields: [productOrderId], references: [id], onDelete: Cascade)
+  symptom      Symptom              @relation(name: "SymptomToPlatformProductOrderSymptom", fields: [symptomId], references: [id], onDelete: Cascade)
+
+  @@unique([productOrderId, symptomId])
+  @@map("platform_product_order_symptoms")
+}
+
+model PlatformProductOrderChatMessage {
+  id           Int      @id @default(autoincrement())
+  chatRoomId   Int
+  authorId     Int
+  message      String
+  isDeleted    Boolean  @default(false)
+  deleteForAll Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  chatRoom                  PlatformProductOrderChatRoom @relation(name: "ChatRoomToPlatformProductOrderChatMessage", fields: [chatRoomId], references: [id], onDelete: Cascade)
+  author                    User                         @relation(name: "AuthorToPlatformProductOrderChatMessage", fields: [authorId], references: [id], onDelete: Cascade)
+  clientSurveyTokenBalances ClientSurveyTokenBalance[]   @relation(name: "ChatMessageToClientSurveyTokenBalance")
+  clientSMLTokenBalances    ClientSMLTokenBalance[]      @relation(name: "ChatMessageToClientSMLTokenBalance")
+  MessageRead               MessageRead[]                @relation(name: "MessageReadToMessage")
+
+  @@map("platform_product_order_chat_messages")
+}
+
+model MessageRead {
+  id        Int      @id @default(autoincrement())
+  messageId Int
+  userId    Int
+  isRead    Boolean  @default(false)
+  readAt    DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  platformProductOrderChatMessage PlatformProductOrderChatMessage @relation(name: "MessageReadToMessage", fields: [messageId], references: [id], onDelete: Cascade)
+  user                            User                            @relation(name: "MessageReadToUser", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([messageId, userId])
+  @@map("message_read")
+}
+
+model ProductOrderChatRoomMember {
+  id                     Int      @id @default(autoincrement())
+  productOrderChatRoomId Int
+  userId                 Int
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  productOrderChatRoom PlatformProductOrderChatRoom @relation(name: "ChatRoomMemberToChatRoom", fields: [productOrderChatRoomId], references: [id], onDelete: Cascade)
+  user                 User                         @relation(name: "ChatRoomMemberToUser", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([productOrderChatRoomId, userId])
+  @@map("product_order_chat_room_members")
+}
+
+model PlatformProductOrderChatRoom {
+  id             Int      @id @default(autoincrement())
+  productOrderId Int
+  isGroupRoom    Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  productOrder                     PlatformProductOrder              @relation(name: "ProductOrderToPlatformProductOrderChatRoom", fields: [productOrderId], references: [id], onDelete: Cascade)
+  platformProductOrderChatMessages PlatformProductOrderChatMessage[] @relation(name: "ChatRoomToPlatformProductOrderChatMessage")
+  productOrderChatRoomMembers      ProductOrderChatRoomMember[]      @relation(name: "ChatRoomMemberToChatRoom")
+
+  @@map("platform_product_order_chat_rooms")
+}
+
+model PlatformProductOrderComment {
+  id             Int      @id @default(autoincrement())
+  comment        String
+  userId         Int
+  productOrderId Int
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user         User                 @relation(name: "UserToPlatformProductOrderComment", fields: [userId], references: [id], onDelete: Cascade)
+  productOrder PlatformProductOrder @relation(name: "ProductOrderToPlatformProductOrderComment", fields: [productOrderId], references: [id], onDelete: Cascade)
+
+  @@map("platform_product_order_comments")
+}
+
+model PlatformProductOrderInfluencer {
+  id             Int       @id @default(autoincrement())
+  productOrderId Int
+  influencerId   Int
+  agreedAmount   Decimal
+  currency       Int
+  status         Int
+  signedAt       DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  productOrder PlatformProductOrder @relation(name: "ProductOrderToPlatformProductOrderInfluencer", fields: [productOrderId], references: [id], onDelete: Cascade)
+  influencer   Influencer           @relation(name: "InfluencerToPlatformProductOrderInfluencer", fields: [influencerId], references: [id], onDelete: Cascade)
+
+  @@unique([productOrderId, influencerId], name: "PlatformProductOrderInfluencerIdentifier")
+  @@map("platform_product_order_influencers")
+}
+
+model Currency {
+  id        Int      @id @default(autoincrement())
+  code      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  productOrders PlatformProductOrder[] @relation(name: "ProductOrderToCurrency")
+
+  @@map("currencies")
+}
+
+model File {
+  id        Int      @id @default(autoincrement())
+  url       String
+  // AWS S3 file key
+  key       String
+  filename  String
+  name      String
+  // save a file type perhaps?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("files")
+}
+
+model CalendarEvent {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  meetUrl     String?
+  startTime   DateTime
+  endTime     DateTime
+  eventType   Int
+  creatorId   Int
+  organizerId Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  creator             User                    @relation(name: "CreatorToCalendarEvent", fields: [creatorId], references: [id])
+  organizer           User                    @relation(name: "OrganizerToCalendarEvent", fields: [organizerId], references: [id], onDelete: Cascade)
+  attendees           CalendarEventAttendee[] @relation(name: "CalendarEventToCalendarEventAttendee")
+  notificationPayload NotificationPayload[]   @relation(name: "CalendarEventToNotificationPayload")
+
+  @@map("calendar_events")
+}
+
+model CalendarEventAttendee {
+  id              Int      @id @default(autoincrement())
+  calendarEventId Int
+  userId          Int
+  status          Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user          User          @relation(name: "UserToCalendarEventAttendee", fields: [userId], references: [id], onDelete: Cascade)
+  calendarEvent CalendarEvent @relation(name: "CalendarEventToCalendarEventAttendee", fields: [calendarEventId], references: [id], onDelete: Cascade)
+
+  @@unique([calendarEventId, userId], name: "CalendarEventAttendeeIdentifier")
+  @@map("calendar_event_attendees")
+}
+
+model Notification {
+  id          Int      @id @default(autoincrement())
+  type        Int
+  title       String
+  description String
+  link        String?
+  variant     String   @default("info")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  notificationUsers   NotificationUser[]   @relation(name: "NotificationToNotificationUser")
+  notificationPayload NotificationPayload? @relation(name: "NotificationToNotificationPayload")
+
+  @@map("notifications")
+}
+
+model NotificationUser {
+  id             Int      @id @default(autoincrement())
+  notificationId Int
+  userId         Int
+  seen           Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  notification Notification @relation(name: "NotificationToNotificationUser", fields: [notificationId], references: [id], onDelete: Cascade)
+  user         User         @relation(name: "UserToNotificationUser", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notification_users")
+}
+
+model NotificationPayload {
+  id                     Int  @id @default(autoincrement())
+  notificationId         Int  @unique
+  userId                 Int?
+  adminId                Int?
+  influencerId           Int?
+  ambassadorId           Int?
+  clientId               Int?
+  campaignId             Int?
+  campaignReportId       Int?
+  socialMediaListeningId Int?
+  surveyId               Int?
+  calendarEventId        Int?
+  transactionId          Int?
+  transactionFlowId      Int?
+  platformProductOrderId Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  notification         Notification          @relation(name: "NotificationToNotificationPayload", fields: [notificationId], references: [id], onDelete: Cascade)
+  user                 User?                 @relation(name: "UserToNotificationPayload", fields: [userId], references: [id])
+  admin                User?                 @relation(name: "AdminToNotificationPayload", fields: [adminId], references: [id])
+  ambassador           User?                 @relation(name: "AmbassadorToNotificationPayload", fields: [ambassadorId], references: [id])
+  influencer           User?                 @relation(name: "InfluencerToNotificationPayload", fields: [influencerId], references: [id])
+  client               User?                 @relation(name: "ClientToNotificationPayload", fields: [clientId], references: [id])
+  campaign             Campaign?             @relation(name: "CampaignToNotificationPayload", fields: [campaignId], references: [id])
+  campaignReport       CampaignReport?       @relation(name: "CampaignReportToNotificationPayload", fields: [campaignReportId], references: [id])
+  socialMediaListening SocialMediaListening? @relation(name: "SocialMediaListeningToNotificationPayload", fields: [socialMediaListeningId], references: [id])
+  survey               Survey?               @relation(name: "SurveyToNotificationPayload", fields: [surveyId], references: [id], onDelete: Cascade)
+  calendarEvent        CalendarEvent?        @relation(name: "CalendarEventToNotificationPayload", fields: [calendarEventId], references: [id])
+  transaction          Transaction?          @relation(name: "TransactionToNotificationPayload", fields: [transactionId], references: [id])
+  transactionFlow      TransactionFlow?      @relation(name: "TransactionFlowToNotificationPayload", fields: [transactionFlowId], references: [id])
+  platformProductOrder PlatformProductOrder? @relation(name: "PlatformProductOrderToNotificationPayload", fields: [platformProductOrderId], references: [id])
+
+  @@map("notification_payloads")
+}
+
+model InfluencerFollowersDistribution {
+  id                Int      @id @default(autoincrement())
+  mean              Decimal
+  standardDeviation Decimal
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  ranges InfluencerFollowersDistributionRange[] @relation(name: "InfuencerFollowersDistributionRangeToInfluencerFollowersDistribution")
+
+  @@map("influencer_followers_distributions")
+}
+
+model InfluencerFollowersDistributionRange {
+  id                                Int      @id @default(autoincrement())
+  influencerFollowersDistributionId Int
+  from                              Decimal?
+  to                                Decimal?
+  count                             Int
+  createdAt                         DateTime @default(now())
+  updatedAt                         DateTime @updatedAt
+
+  influencerFollowersDistribution              InfluencerFollowersDistribution               @relation(name: "InfuencerFollowersDistributionRangeToInfluencerFollowersDistribution", fields: [influencerFollowersDistributionId], references: [id])
+  influencers                                  InfluencerFollowersDistributionInfluencer[]   @relation(name: "InfluencerFollowersDistributionInfluencerToInfluencerFollowersDistributionRange")
+  influencerCampaignDesiredAmountDistributions InfluencerCampaignDesiredAmountDistribution[] @relation(name: "InfluencerCampaignDesiredAmountDistributionToInfluencerFollowersDistributionRange")
+
+  @@map("influencer_followers_distribution_ranges")
+}
+
+model InfluencerFollowersDistributionInfluencer {
+  id                                     Int      @id @default(autoincrement())
+  influencerFollowersDistributionRangeId Int
+  influencerId                           Int
+  createdAt                              DateTime @default(now())
+
+  influencerFollowersDistributionRange InfluencerFollowersDistributionRange @relation(name: "InfluencerFollowersDistributionInfluencerToInfluencerFollowersDistributionRange", fields: [influencerFollowersDistributionRangeId], references: [id])
+  influencer                           Influencer                           @relation(name: "InfluencerFollowersDistributionInfluencerToInfluencer", fields: [influencerId], references: [id])
+
+  @@map("influencer_followers_distribution_influencers")
+}
+
+model InfluencerCampaignDesiredAmountDistribution {
+  id                                     Int      @id @default(autoincrement())
+  mean                                   Decimal
+  standardDeviation                      Decimal
+  influencerFollowersDistributionRangeId Int
+  postType                               Int
+  createdAt                              DateTime @default(now())
+  updatedAt                              DateTime @updatedAt
+
+  influencerFollowersDistributionRange InfluencerFollowersDistributionRange               @relation(name: "InfluencerCampaignDesiredAmountDistributionToInfluencerFollowersDistributionRange", fields: [influencerFollowersDistributionRangeId], references: [id])
+  ranges                               InfluencerCampaignDesiredAmountDistributionRange[] @relation(name: "InfluencerCampaignDesiredAmountDistributionToInfluencerFollowersDistribution")
+
+  @@map("influencer_campaign_desired_amount_distributions")
+}
+
+model InfluencerCampaignDesiredAmountDistributionRange {
+  id                                            Int      @id @default(autoincrement())
+  influencerCampaignDesiredAmountDistributionId Int
+  from                                          Decimal?
+  to                                            Decimal?
+  count                                         Int
+  createdAt                                     DateTime @default(now())
+  updatedAt                                     DateTime @updatedAt
+
+  influencerCampaignDesiredAmountDistribution InfluencerCampaignDesiredAmountDistribution @relation(name: "InfluencerCampaignDesiredAmountDistributionToInfluencerFollowersDistribution", fields: [influencerCampaignDesiredAmountDistributionId], references: [id])
+
+  @@map("influencer_campaign_desired_amount_distribution_ranges")
+}
+
+model InfluencerSurveyDesiredAmountDistribution {
+  id                Int      @id @default(autoincrement())
+  mean              Decimal
+  standardDeviation Decimal
+  surveyType        Int
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  ranges InfluencerSurveyDesiredAmountDistributionRange[] @relation(name: "InfluencerSurveyDesiredAmountDistributionToInfluencerFollowersDistribution")
+
+  @@map("influencer_survey_desired_amount_distributions")
+}
+
+model InfluencerSurveyDesiredAmountDistributionRange {
+  id                                          Int      @id @default(autoincrement())
+  influencerSurveyDesiredAmountDistributionId Int
+  from                                        Decimal?
+  to                                          Decimal?
+  count                                       Int
+  createdAt                                   DateTime @default(now())
+  updatedAt                                   DateTime @updatedAt
+
+  influencerSurveyDesiredAmountDistribution InfluencerSurveyDesiredAmountDistribution @relation(name: "InfluencerSurveyDesiredAmountDistributionToInfluencerFollowersDistribution", fields: [influencerSurveyDesiredAmountDistributionId], references: [id])
+
+  @@map("influencer_survey_desired_amount_distribution_ranges")
+}
+
+model Legal {
+  id        Int      @id @default(autoincrement())
+  text      String
+  type      Int
+  language  String?
+  version   Int
+  createdAt DateTime @default(now())
+
+  consents UserLegalConsents[] @relation(name: "LegalToUserLegalConsent")
+
+  @@unique([type, language, version])
+  @@map("legals")
+}
+
+model UserLegalConsents {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  legalId   Int
+  createdAt DateTime @default(now())
+
+  user  User  @relation(name: "UserToUserLegalConsent", fields: [userId], references: [id], onDelete: Cascade)
+  legal Legal @relation(name: "LegalToUserLegalConsent", fields: [legalId], references: [id])
+
+  @@map("user_legal_consents")
+}
